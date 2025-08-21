@@ -62,6 +62,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Import route files
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 // Basic home route
 app.get('/', (req, res) => {
@@ -71,6 +72,7 @@ app.get('/', (req, res) => {
 // Use imported routes
 app.use('/auth', authRoutes);
 app.use('/', dashboardRoutes);
+app.use('/', profileRoutes);
 
 // Start the server
 // --------------------------------------------------

@@ -1,0 +1,16 @@
+<h1>Create Your Company Profile</h1>
+<form action="/company/create_profile" method="POST" enctype="multipart/form-data">
+  <label for="company_name">Company Name:</label>
+  <input type="text" id="company_name" name="company_name" required><br>
+
+  <label for="company_logo">Company Logo:</label>
+  <input type="file" id="company_logo" name="company_logo"><br>
+
+  <label for="founding_details">Founding Details:</label>
+  <input type="text" id="founding_details" name="founding_details"><br>
+
+  <label for="about">About Us:</label>
+  <textarea id="about" name="about"></textarea><br>
+
+  <button type="submit">Create Profile</button>
+</form>

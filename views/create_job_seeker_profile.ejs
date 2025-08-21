@@ -1,0 +1,16 @@
+<h1>Create Your Developer Profile</h1>
+<form action="/job_seeker/create_profile" method="POST" enctype="multipart/form-data">
+  <label for="profile_picture">Profile Picture:</label>
+  <input type="file" id="profile_picture" name="profile_picture"><br>
+
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required><br>
+  
+  <label for="role">Role:</label>
+  <input type="text" id="role" name="role"><br>
+  
+  <label for="skills">Skills (comma-separated):</label>
+  <textarea id="skills" name="skills"></textarea><br>
+  
+  <button type="submit">Create Profile</button>
+</form>
