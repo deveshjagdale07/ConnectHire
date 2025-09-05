@@ -308,5 +308,26 @@ router.post('/company/update_profile', requireLogin, uploadCompany.single('compa
         res.status(500).send('Profile update failed.');
     }
 });
+// GET route to fetch full profile data for a pop-up
+router.get('/job_seeker/api/profile/:id', async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const [profileRows] = await db.query('SELECT * FROM job_seeker_profiles WHERE user_id = ?', [userId]);
+        const profile = profileRows[0];
+        const [certifications] = await db.query('SELECT * FROM certifications WHERE user_id = ?', [userId]);
 
+        if (profile) {
+            // Send JSON data instead of rendering a view
+            res.json({
+                profile: profile,
+                certifications: certifications || []
+            });
+        } else {
+            res.status(404).json({ error: "Profile not found." });
+        }
+    } catch (error) {
+        console.error('Error fetching API profile:', error);
+        res.status(500).json({ error: 'An error occurred.' });
+    }
+});
 module.exports = router;

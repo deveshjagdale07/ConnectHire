@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Send Job Request to <%= developer.name %></h1>
+    
+    <form action="/company/submit_request" method="POST">
+        <input type="hidden" name="jobSeekerId" value="<%= jobSeekerId %>">
+
+        <label for="role">Job Role:</label>
+        <input type="text" id="role" name="role" required><br>
+
+        <label for="compensation">Compensation:</label>
+        <input type="text" id="compensation" name="compensation"><br>
+        
+        <label for="duration">Duration:</label>
+        <input type="text" id="duration" name="duration" placeholder="e.g., 6 months, 1 year"><br>
+
+        <label for="job_type">Job Type:</label>
+        <select id="job_type" name="job_type" required>
+            <option value="">Select a Job Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Internship">Internship</option>
+        </select><br>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+
+        <button type="submit">Submit Job Request</button>
+    </form>
+</body>
+</html>
