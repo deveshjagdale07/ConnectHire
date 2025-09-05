@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .application-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .application-card img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Applications</h1>
+
+    <% if (applications.length > 0) { %>
+        <% applications.forEach(app => { %>
+            <div class="application-card">
+                <img src="<%= app.company_logo || '/images/default_company.png' %>" alt="<%= app.company_name %> Logo">
+                <div>
+                    <h3><%= app.job_role %> at <%= app.company_name %></h3>
+                    <p><strong>Status:</strong> <span style="font-weight: bold; text-transform: capitalize;"><%= app.status %></span></p>
+                    <p><strong>Compensation:</strong> <%= app.job_compensation %></p>
+                    <p><strong>Location:</strong> <%= app.job_location %></p>
+                    <p>Applied on <%= new Date(app.created_at).toLocaleDateString() %></p>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>You have not applied for any jobs yet.</p>
+    <% } %>
+</body>
+</html>

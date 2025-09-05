@@ -22,9 +22,13 @@
                 <p><strong>Description:</strong> <%= job.description %></p>
                 <p><strong>Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
                 
-                <form action="/job_seeker/apply_job/<%= job.id %>" method="POST">
-                    <button type="submit">Apply</button>
-                </form>
+                <% if (job.application_id) { %>
+                    <button type="button" disabled style="background-color: #555; color: white;">Applied</button>
+                <% } else { %>
+                    <form action="/job_seeker/apply_job/<%= job.id %>" method="POST">
+                        <button type="submit">Apply</button>
+                    </form>
+                <% } %>
             </div>
         <% }); %>
     <% } else { %>
