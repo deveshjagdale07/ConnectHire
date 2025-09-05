@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/autocomplete.css">
+</head>
+<body>
+
+    <h1>Update Your Developer Profile</h1>
+
+    <div class="profile-completion">
+        <h3>Profile Completion: <span id="completion-text"></span>%</h3>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+    </div>
+    <br>
+
+    <form action="/job_seeker/update_profile" method="POST" enctype="multipart/form-data">
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" id="profile_picture" name="profile_picture"><br>
+
+        <% if (profile.profile_picture) { %>
+            <img src="<%= profile.profile_picture %>" alt="Current Profile Picture" style="width: 100px; height: 100px;"><br>
+        <% } %>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="<%= profile.name %>" required><br>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="">Select a Role</option>
+            <option value="Full-stack Developer" <%= profile.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
+            <option value="Frontend Developer" <%= profile.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
+            <option value="Backend Developer" <%= profile.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
+            <option value="Mobile Developer" <%= profile.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
+            <option value="DevOps Engineer" <%= profile.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
+            <option value="UI/UX Designer" <%= profile.role === 'UI/UX Designer' ? 'selected' : '' %>>UI/UX Designer</option>
+        </select><br>
+
+        <label for="skills">Skills (Start typing to search):</label>
+        <input type="text" id="skills-input" name="skills-input">
+        <div id="skills-dropdown-list"></div>
+        <input type="hidden" id="skills" name="skills" value="<%= profile.skills %>">
+        <br>
+        
+        <label for="work_preferences">Work Preferences:</label>
+        <select id="work_preferences" name="work_preferences" required>
+            <option value="">Select Work Preference</option>
+            <option value="Full-time" <%= profile.work_preferences === 'Full-time' ? 'selected' : '' %>>Full-time</option>
+            <option value="Part-time" <%= profile.work_preferences === 'Part-time' ? 'selected' : '' %>>Part-time</option>
+            <option value="Freelance" <%= profile.work_preferences === 'Freelance' ? 'selected' : '' %>>Freelance</option>
+            <option value="Remote" <%= profile.work_preferences === 'Remote' ? 'selected' : '' %>>Remote</option>
+            <option value="On-site" <%= profile.work_preferences === 'On-site' ? 'selected' : '' %>>On-site</option>
+            <option value="Hybrid" <%= profile.work_preferences === 'Hybrid' ? 'selected' : '' %>>Hybrid</option>
+        </select><br>
+
+        <label for="projects">Projects:</label>
+        <textarea id="projects" name="projects"><%= profile.projects %></textarea><br>
+        
+        <label for="experience">Experience:</label>
+        <textarea id="experience" name="experience"><%= profile.experience %></textarea><br>
+
+        <label for="location">Location:</label>
+        <select id="location" name="location" required>
+            <option value="">Select a Location</option>
+            <option value="Jalgaon" <%= profile.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+            <option value="Mumbai" <%= profile.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+            <option value="Pune" <%= profile.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+            <option value="Bangalore" <%= profile.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+            <option value="Delhi" <%= profile.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+            <option value="Chennai" <%= profile.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+            <option value="Hyderabad" <%= profile.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+            <option value="Remote" <%= profile.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+        </select><br>
+
+        <label for="resume_file">Resume File (PDF only):</label>
+        <input type="file" id="resume_file" name="resume_file"><br>
+
+        <% if (profile.resume_url) { %>
+            <p>Current Resume: <a href="<%= profile.resume_url %>" target="_blank">Download Here</a></p>
+        <% } %>
+
+        <button type="submit">Update Profile</button>
+    </form>
+
+    <br>
+    <hr>
+    <h3>Certifications</h3>
+    <div id="certifications-list">
+        <% certifications.forEach(cert => { %>
+            <div class="certification-item">
+                <a href="<%= cert.file_url %>" target="_blank"><%= cert.name %></a>
+                <form action="/job_seeker/delete_certificate/<%= cert.id %>" method="POST" style="display: inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        <% }); %>
+    </div>
+    
+    <br>
+    
+    <h4>Add New Certificate</h4>
+    <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data">
+        <label for="certificate_name">Certificate Name:</label>
+        <input type="text" id="certificate_name" name="certificate_name" required><br>
+    
+        <label for="certificate_file">Certificate File:</label>
+        <input type="file" id="certificate_file" name="certificate_file" required><br>
+    
+        <button type="submit">Add Certificate</button>
+    </form>
+    
+    <script src="/js/autocomplete.js"></script>
+
+    <script>
+        const completionValue = `<%= completion %>`;
+        document.getElementById('progress-bar').style.width = completionValue + '%';
+        document.getElementById('completion-text').textContent = completionValue;
+    </script>
+</body>
+</html>

@@ -11,25 +11,30 @@ function requireLogin(req, res, next) {
         res.redirect('/auth/login'); // Not authenticated, redirect to login page
     }
 }
-
 // Job Seeker Dashboard
 router.get('/job_seeker/dashboard', requireLogin, (req, res) => {
     if (req.session.user.role === 'job_seeker') {
-        res.render('job_seeker_dashboard', { title: 'Job Seeker Dashboard' });
-    } else {
-        res.status(403).send("Access Denied"); // 403 Forbidden
-    }
-});
-
-// Company Dashboard
-router.get('/company/dashboard', requireLogin, (req, res) => {
-    if (req.session.user.role === 'company') {
-        res.render('company_dashboard', { title: 'Company Dashboard' });
+        res.render('job_seeker_dashboard', { 
+            title: 'Job Seeker Dashboard',
+            user: req.session.user // Pass the user object to the view
+        });
     } else {
         res.status(403).send("Access Denied");
     }
 });
 
+
+// Company Dashboard
+router.get('/company/dashboard', requireLogin, (req, res) => {
+    if (req.session.user.role === 'company') {
+        res.render('company_dashboard', { 
+            title: 'Company Dashboard',
+            user: req.session.user // Pass the user object to the view
+        });
+    } else {
+        res.status(403).send("Access Denied");
+    }
+});
 // Admin Dashboard
 router.get('/admin/dashboard', requireLogin, (req, res) => {
     if (req.session.user.role === 'admin') {

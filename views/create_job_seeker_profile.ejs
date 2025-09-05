@@ -1,16 +1,89 @@
-<h1>Create Your Developer Profile</h1>
-<form action="/job_seeker/create_profile" method="POST" enctype="multipart/form-data">
-  <label for="profile_picture">Profile Picture:</label>
-  <input type="file" id="profile_picture" name="profile_picture"><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/autocomplete.css">
+</head>
+<body>
 
-  <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required><br>
-  
-  <label for="role">Role:</label>
-  <input type="text" id="role" name="role"><br>
-  
-  <label for="skills">Skills (comma-separated):</label>
-  <textarea id="skills" name="skills"></textarea><br>
-  
-  <button type="submit">Create Profile</button>
-</form>
+    <h1>Create Your Developer Profile</h1>
+    <form action="/job_seeker/create_profile" method="POST" enctype="multipart/form-data">
+        <label for="profile_picture">Profile Picture:</label>
+        <input type="file" id="profile_picture" name="profile_picture"><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="role">Role:</label>
+        <select id="role" name="role" required>
+            <option value="">Select a Role</option>
+            <option value="Full-stack Developer">Full-stack Developer</option>
+            <option value="Frontend Developer">Frontend Developer</option>
+            <option value="Backend Developer">Backend Developer</option>
+            <option value="Mobile Developer">Mobile Developer</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
+            <option value="UI/UX Designer">UI/UX Designer</option>
+        </select><br>
+
+        <label for="skills">Skills (Start typing to search):</label>
+        <input type="text" id="skills-input" name="skills-input">
+        <div id="skills-dropdown-list"></div>
+        <input type="hidden" id="skills" name="skills">
+        
+        <br>
+        
+        <label for="work_preferences">Work Preferences:</label>
+        <select id="work_preferences" name="work_preferences" required>
+            <option value="">Select Work Preference</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Remote">Remote</option>
+            <option value="On-site">On-site</option>
+            <option value="Hybrid">Hybrid</option>
+        </select><br>
+
+        <label for="projects">Projects:</label>
+        <textarea id="projects" name="projects" placeholder="Describe your key projects"></textarea><br>
+        
+        <label for="experience">Experience:</label>
+        <textarea id="experience" name="experience" placeholder="Describe your work experience"></textarea><br>
+
+        <label for="location">Location:</label>
+        <select id="location" name="location" required>
+            <option value="">Select a Location</option>
+            <option value="Jalgaon">Jalgaon</option>
+            <option value="Mumbai">Mumbai</option>
+            <option value="Pune">Pune</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Delhi">Delhi</option>
+            <option value="Chennai">Chennai</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Remote">Remote</option>
+        </select><br>
+
+        <label for="resume_file">Resume File (PDF only):</label>
+        <input type="file" id="resume_file" name="resume_file"><br>
+
+        <button type="submit">Create Profile</button>
+    </form>
+
+    <br>
+    <hr>
+    <h3>Add Certifications</h3>
+    <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data">
+        <label for="certificate_name">Certificate Name:</label>
+        <input type="text" id="certificate_name" name="certificate_name" required><br>
+    
+        <label for="certificate_file">Certificate File:</label>
+        <input type="file" id="certificate_file" name="certificate_file" required><br>
+    
+        <button type="submit">Add Certificate</button>
+    </form>
+    
+    <script src="/js/autocomplete.js"></script>
+</body>
+</html>

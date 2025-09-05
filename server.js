@@ -63,6 +63,7 @@ app.set('views', path.join(__dirname, 'views'));
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const browseRoutes = require('./routes/browseRoutes');
 
 // Basic home route
 app.get('/', (req, res) => {
@@ -73,6 +74,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/', dashboardRoutes);
 app.use('/', profileRoutes);
+app.use('/', browseRoutes); 
 
 // Start the server
 // --------------------------------------------------
