@@ -90,6 +90,7 @@
     
 </body>
 <script>
+    // ... (modal-related variables and functions)
     const modal = document.getElementById("profileModal");
     const modalBody = document.getElementById("modal-body");
     const span = document.getElementsByClassName("close")[0];
@@ -104,6 +105,7 @@
             if (response.ok) {
                 const profile = data.profile;
                 const certifications = data.certifications;
+                const jobId = "<%= jobId %>"; // Pass the jobId from the server
 
                 let skillsList = '';
                 if (profile.skills) {
@@ -135,6 +137,10 @@
                     <ul>${certList}</ul>
                     <br>
                     <a href="${profile.resume_url}" target="_blank">Download Resume</a>
+                    <hr>
+                    <form action="/company/schedule_interview/${jobId}/${userId}" method="POST">
+                        <button type="submit" style="background-color: #007bff; color: white;">Schedule Interview</button>
+                    </form>
                 `;
                 modal.style.display = "block";
             } else {
@@ -143,12 +149,10 @@
         });
     });
 
-    // Close the modal when the user clicks on <span> (x)
     span.onclick = function() {
         modal.style.display = "none";
     }
 
-    // Close the modal when the user clicks anywhere outside of the modal
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";

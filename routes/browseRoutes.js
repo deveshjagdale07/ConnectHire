@@ -16,10 +16,8 @@ function isCompany(req, res, next) {
 // GET route to display all job seeker profiles
 router.get('/company/browse_developers', isCompany, async (req, res) => {
     try {
-        // Fetch all job seeker profiles from the database
         const [profiles] = await db.query('SELECT user_id, profile_picture, name, role, skills, work_preferences, location FROM job_seeker_profiles');
-
-        res.render('browse_developers', { 
+        res.render('browse_developers', {
             title: 'Browse Developers',
             profiles: profiles
         });
@@ -28,13 +26,13 @@ router.get('/company/browse_developers', isCompany, async (req, res) => {
         res.status(500).send('An error occurred while fetching profiles.');
     }
 });
+
 // GET route to show the job request form
 router.get('/company/request_job/:id', isCompany, async (req, res) => {
     const jobSeekerId = req.params.id;
     try {
         const [rows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [jobSeekerId]);
         const developer = rows[0];
-
         if (developer) {
             res.render('job_request_form', {
                 title: 'Send Job Request',
@@ -49,11 +47,11 @@ router.get('/company/request_job/:id', isCompany, async (req, res) => {
         res.status(500).send('An error occurred.');
     }
 });
+
 // POST route to handle job request form submission
 router.post('/company/submit_request', isCompany, async (req, res) => {
     const { jobSeekerId, role, compensation, duration, job_type, location } = req.body;
     const companyId = req.session.user.id;
-
     try {
         await db.query(
             'INSERT INTO job_requests (company_id, job_seeker_id, role, compensation, duration, job_type, location) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -104,40 +102,64 @@ router.get('/company/my_listings', isCompany, async (req, res) => {
 });
 
 
-// New GET route to view applicants for a specific job
+// GET route to view applicants for a specific job
 router.get('/company/job_applicants/:jobId', isCompany, async (req, res) => {
     const jobId = req.params.jobId;
     const companyId = req.session.user.id;
 
     try {
-        // Fetch the job listing details to display on the page
         const [jobListingRows] = await db.query('SELECT role FROM job_listings WHERE id = ? AND company_id = ?', [jobId, companyId]);
         const jobListing = jobListingRows[0];
-
         if (!jobListing) {
             return res.status(404).send('Job listing not found or you do not have permission to view it.');
         }
 
-        // Fetch all applications for this job, along with job seeker profile details
         const [applicants] = await db.query(
             `SELECT 
-                a.status, a.created_at, 
-                jsp.user_id, jsp.profile_picture, jsp.name, jsp.role, jsp.skills
+                a.status, a.created_at, a.job_seeker_id as user_id,
+                jsp.profile_picture, jsp.name, jsp.role, jsp.skills
             FROM applications AS a
             JOIN job_seeker_profiles AS jsp ON a.job_seeker_id = jsp.user_id
             WHERE a.job_id = ?`,
             [jobId]
         );
-
+        
+        // Corrected line: Passing jobId to the view
         res.render('job_applicants', {
             title: `Applicants for ${jobListing.role}`,
             jobListing: jobListing,
-            applicants: applicants
+            applicants: applicants,
+            jobId: jobId
         });
 
     } catch (error) {
         console.error('Error fetching job applicants:', error);
         res.status(500).send('An error occurred while fetching job applicants.');
+    }
+});
+
+
+// New POST route to handle scheduling an interview with an applicant
+router.post('/company/schedule_interview/:jobId/:applicantId', isCompany, async (req, res) => {
+    const jobId = req.params.jobId;
+    const applicantId = req.params.applicantId;
+    const companyId = req.session.user.id;
+
+    try {
+        const [jobRows] = await db.query('SELECT id FROM job_listings WHERE id = ? AND company_id = ?', [jobId, companyId]);
+        if (jobRows.length === 0) {
+            return res.status(403).send('Permission denied.');
+        }
+
+        await db.query(
+            'UPDATE applications SET status = ? WHERE job_id = ? AND job_seeker_id = ?',
+            ['interview_scheduled', jobId, applicantId]
+        );
+
+        res.redirect(`/company/job_applicants/${jobId}`);
+    } catch (error) {
+        console.error('Error scheduling interview:', error);
+        res.status(500).send('Failed to schedule interview.');
     }
 });
 
