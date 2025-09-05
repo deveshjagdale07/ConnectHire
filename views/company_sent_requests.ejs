@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Sent Job Requests</h1>
+    
+    <% if (requests.length > 0) { %>
+        <% requests.forEach(request => { %>
+            <div class="request-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <img src="<%= request.profile_picture || '/images/default_avatar.png' %>" alt="<%= request.name %>" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                    <h3><%= request.name %></h3>
+                </div>
+                <p><strong>Job Role:</strong> <%= request.role %></p>
+                <p><strong>Status:</strong> <span style="font-weight: bold; text-transform: capitalize;"><%= request.status %></span></p>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>You have not sent any job requests yet.</p>
+    <% } %>
+</body>
+</html>

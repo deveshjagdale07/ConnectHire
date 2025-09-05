@@ -1,2 +1,90 @@
-<h1>Welcome, Admin!</h1>
-<p>This is the admin control panel.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, Admin!</h1>
+    <p>This is your control panel.</p>
+
+    <hr>
+
+    <h2>All Users</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% allUsers.forEach(user => { %>
+                <tr>
+                    <td><%= user.id %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.role %></td>
+                    <td><%= user.created_at %></td>
+                    <td>
+                        <form action="/admin/delete_user/<%= user.id %>" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>All Job Requests</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Company ID</th>
+                <th>Job Seeker ID</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% allJobRequests.forEach(request => { %>
+                <tr>
+                    <td><%= request.id %></td>
+                    <td><%= request.company_id %></td>
+                    <td><%= request.job_seeker_id %></td>
+                    <td><%= request.role %></td>
+                    <td><%= request.status %></td>
+                    <td>
+                        <form action="/admin/delete_request/<%= request.id %>" method="POST">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>
