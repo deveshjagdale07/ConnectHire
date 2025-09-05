@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .applicant-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer; /* Add a cursor to indicate it's clickable */
+        }
+        .applicant-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .applicant-details {
+            flex-grow: 1;
+        }
+
+        /* Modal styles from browse_developers.ejs */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Applicants for <%= jobListing.role %></h1>
+
+    <% if (applicants.length > 0) { %>
+        <% applicants.forEach(applicant => { %>
+            <div class="applicant-card" data-user-id="<%= applicant.user_id %>">
+                <img src="<%= applicant.profile_picture || '/images/default_avatar.png' %>" alt="<%= applicant.name %>">
+                <div class="applicant-details">
+                    <h3><%= applicant.name %></h3>
+                    <p><strong>Role:</strong> <%= applicant.role %></p>
+                    <p><strong>Skills:</strong> <%= applicant.skills %></p>
+                    <p><strong>Status:</strong> <span style="text-transform: capitalize;"><%= applicant.status %></span></p>
+                    <p>Applied on <%= new Date(applicant.created_at).toLocaleDateString() %></p>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>There are no applicants for this job yet.</p>
+    <% } %>
+    
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+    
+</body>
+<script>
+    const modal = document.getElementById("profileModal");
+    const modalBody = document.getElementById("modal-body");
+    const span = document.getElementsByClassName("close")[0];
+
+    document.querySelectorAll('.applicant-card').forEach(card => {
+        card.addEventListener('click', async (event) => {
+            const userId = event.currentTarget.dataset.userId;
+
+            const response = await fetch(`/job_seeker/api/profile/${userId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                const profile = data.profile;
+                const certifications = data.certifications;
+
+                let skillsList = '';
+                if (profile.skills) {
+                    skillsList = profile.skills.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
+                }
+
+                let certList = '';
+                certifications.forEach(cert => {
+                    certList += `
+                        <li>
+                            <a href="${cert.file_url}" target="_blank">${cert.name}</a>
+                        </li>
+                    `;
+                });
+
+                modalBody.innerHTML = `
+                    <h2>${profile.name}'s Profile</h2>
+                    <div style="text-align: center;">
+                        <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+                    </div>
+                    <p><strong>Role:</strong> ${profile.role}</p>
+                    <p><strong>Location:</strong> ${profile.location}</p>
+                    <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
+                    <p><strong>Experience:</strong> ${profile.experience}</p>
+                    <p><strong>Projects:</strong> ${profile.projects}</p>
+                    <h3>Skills</h3>
+                    <ul>${skillsList}</ul>
+                    <h3>Certifications</h3>
+                    <ul>${certList}</ul>
+                    <br>
+                    <a href="${profile.resume_url}" target="_blank">Download Resume</a>
+                `;
+                modal.style.display = "block";
+            } else {
+                alert('Could not load profile.');
+            }
+        });
+    });
+
+    // Close the modal when the user clicks on <span> (x)
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Close the modal when the user clicks anywhere outside of the modal
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+</html>

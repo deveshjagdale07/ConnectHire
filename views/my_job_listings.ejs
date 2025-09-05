@@ -17,6 +17,7 @@
                 <p><strong>Location:</strong> <%= job.location %></p>
                 <p><strong>Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
                 <p><%= job.description %></p>
+                <a href="/company/job_applicants/<%= job.id %>"><button>View Applicants</button></a>
             </div>
         <% }); %>
     <% } else { %>
