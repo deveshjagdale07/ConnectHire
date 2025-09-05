@@ -65,4 +65,42 @@ router.post('/company/submit_request', isCompany, async (req, res) => {
         res.status(500).send('Failed to submit job request.');
     }
 });
+
+
+// GET route to show the company job posting form
+router.get('/company/post_job', isCompany, (req, res) => {
+    res.render('post_job_form', { title: 'Post a New Job' });
+});
+
+// POST route to handle job post form submission
+router.post('/company/post_job', isCompany, async (req, res) => {
+    const { role, compensation, job_type, duration, location, description } = req.body;
+    const company_id = req.session.user.id;
+    try {
+        await db.query(
+            'INSERT INTO job_listings (company_id, role, compensation, job_type, duration, location, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [company_id, role, compensation, job_type, duration, location, description]
+        );
+        res.redirect('/company/dashboard');
+    } catch (error) {
+        console.error('Error posting job:', error);
+        res.status(500).send('Failed to post job.');
+    }
+});
+
+// GET route to view all of a company's job listings
+router.get('/company/my_listings', isCompany, async (req, res) => {
+    const company_id = req.session.user.id;
+    try {
+        const [listings] = await db.query('SELECT * FROM job_listings WHERE company_id = ?', [company_id]);
+        res.render('my_job_listings', {
+            title: 'My Job Listings',
+            listings: listings
+        });
+    } catch (error) {
+        console.error('Error fetching job listings:', error);
+        res.status(500).send('Failed to fetch job listings.');
+    }
+});
+
 module.exports = router;
