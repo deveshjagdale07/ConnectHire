@@ -40,7 +40,7 @@ router.get('/job_seeker/requests', isJobSeeker, async (req, res) => {
 // GET route to display all job listings for job seekers with search and filters
 router.get('/job_seeker/browse_jobs', isJobSeeker, async (req, res) => {
     const jobSeekerId = req.session.user.id;
-    const { role, job_type, location } = req.query; // Get query parameters
+    const { role, job_type, location } = req.query;
 
     let query = `
         SELECT 
@@ -95,6 +95,18 @@ router.post('/job_seeker/apply_job/:id', isJobSeeker, async (req, res) => {
             'INSERT INTO applications (job_seeker_id, job_id) VALUES (?, ?)',
             [jobSeekerId, jobId]
         );
+        
+        const [jobRows] = await db.query('SELECT company_id FROM job_listings WHERE id = ?', [jobId]);
+        const companyId = jobRows[0].company_id;
+        
+        const [applicantRows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [jobSeekerId]);
+        const applicantName = applicantRows[0].name;
+
+        await db.query(
+            'INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)',
+            [companyId, `${applicantName} has applied to your job listing.`, `/company/job_applicants/${jobId}`]
+        );
+
         res.redirect('/job_seeker/browse_jobs');
     } catch (error) {
         console.error('Error applying for job:', error);

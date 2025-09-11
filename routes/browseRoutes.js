@@ -88,6 +88,17 @@ router.post('/company/submit_request', isCompany, async (req, res) => {
             'INSERT INTO job_requests (company_id, job_seeker_id, role, compensation, duration, job_type, location) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [companyId, jobSeekerId, role, compensation, duration, job_type, location]
         );
+
+        // Get company name for the notification
+        const [companyRows] = await db.query('SELECT company_name FROM company_profiles WHERE user_id = ?', [companyId]);
+        const companyName = companyRows[0].company_name;
+
+        // Create a notification for the developer
+        await db.query(
+            'INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)',
+            [jobSeekerId, `${companyName} has sent you a new job request for the role of ${role}.`, `/job_seeker/requests`]
+        );
+
         res.redirect('/company/dashboard');
     } catch (error) {
         console.error('Error submitting job request:', error);

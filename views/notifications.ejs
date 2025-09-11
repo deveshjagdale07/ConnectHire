@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .notification-card {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .read-notification {
+            background-color: #f9f9f9;
+        }
+        .unread-notification {
+            background-color: #eaf6ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Notifications</h1>
+    <% if (notifications.length > 0) { %>
+        <% notifications.forEach(notification => { %>
+            <div class="notification-card <%= notification.is_read ? 'read-notification' : 'unread-notification' %>">
+                <p><%= notification.message %></p>
+                <small>Received on <%= new Date(notification.created_at).toLocaleString() %></small>
+                <a href="<%= notification.related_url %>" style="float: right; margin-right: 10px;">Go to Link</a>
+                <% if (!notification.is_read) { %>
+                    <form action="/notifications/mark_as_read/<%= notification.id %>" method="POST" style="display: inline;">
+                        <button type="submit" style="float: right;">Mark as Read</button>
+                    </form>
+                <% } %>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <p>You have no notifications at this time.</p>
+    <% } %>
+</body>
+</html>

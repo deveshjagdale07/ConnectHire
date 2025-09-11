@@ -13,6 +13,15 @@ function requireLogin(req, res, next) {
     }
 }
 
+// Middleware to fetch unread notification count
+router.use(async (req, res, next) => {
+    if (req.session.user) {
+        const userId = req.session.user.id;
+        const [countRows] = await db.query('SELECT COUNT(*) AS count FROM notifications WHERE user_id = ? AND is_read = FALSE', [userId]);
+        res.locals.unreadCount = countRows[0].count;
+    }
+    next();
+});
 // Job Seeker Dashboard
 router.get('/job_seeker/dashboard', requireLogin, (req, res) => {
     if (req.session.user.role === 'job_seeker') {
@@ -32,7 +41,20 @@ router.post('/job_seeker/accept_request/:id', requireLogin, async (req, res) => 
 
     try {
         await db.query('UPDATE job_requests SET status = ? WHERE id = ? AND job_seeker_id = ?', ['accepted', requestId, userId]);
-        res.redirect('/job_seeker/dashboard');
+
+        // Create a notification for the company
+        const [requestRows] = await db.query('SELECT company_id, role FROM job_requests WHERE id = ?', [requestId]);
+        const companyId = requestRows[0].company_id;
+        const role = requestRows[0].role;
+        const [seekerRows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [userId]);
+        const seekerName = seekerRows[0].name;
+
+        await db.query(
+            'INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)',
+            [companyId, `${seekerName} has accepted your job request for the role of ${role}.`, `/company/sent_requests`]
+        );
+
+        res.redirect('/job_seeker/requests');
     } catch (error) {
         console.error('Error accepting job request:', error);
         res.status(500).send('Failed to accept job request.');

@@ -30,22 +30,22 @@
         }
         /* Modal styles */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto;
+            margin: 5% auto; 
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 80%; 
             border-radius: 10px;
         }
         .close {
@@ -134,5 +134,74 @@
         </div>
     </div>
     
+    <script>
+        const modal = document.getElementById("profileModal");
+        const modalBody = document.getElementById("modal-body");
+        const span = document.getElementsByClassName("close")[0];
+
+        document.querySelectorAll('.profile-card').forEach(card => {
+            card.addEventListener('click', async (event) => {
+                const userId = event.currentTarget.dataset.userId;
+
+                // Fetch the full profile data from the API route
+                const response = await fetch(`/job_seeker/api/profile/${userId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    const profile = data.profile;
+                    const certifications = data.certifications;
+
+                    let skillsList = '';
+                    if (profile.skills) {
+                        skillsList = profile.skills.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
+                    }
+
+                    let certList = '';
+                    certifications.forEach(cert => {
+                        certList += `
+                            <li>
+                                <a href="${cert.file_url}" target="_blank">${cert.name}</a>
+                            </li>
+                        `;
+                    });
+
+                    modalBody.innerHTML = `
+                        <h2>${profile.name}'s Profile</h2>
+                        <div style="text-align: center;">
+                            <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+                        </div>
+                        <p><strong>Role:</strong> ${profile.role}</p>
+                        <p><strong>Location:</strong> ${profile.location}</p>
+                        <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
+                        <p><strong>Experience:</strong> ${profile.experience}</p>
+                        <p><strong>Projects:</strong> ${profile.projects}</p>
+                        <h3>Skills</h3>
+                        <ul>${skillsList}</ul>
+                        <h3>Certifications</h3>
+                        <ul>${certList}</ul>
+                        <br>
+                        <a href="${profile.resume_url}" target="_blank">Download Resume</a>
+                        <hr>
+                        <a href="/company/request_job/${profile.user_id}"><button>Hire This Developer</button></a>
+                    `;
+                    modal.style.display = "block";
+                } else {
+                    alert('Could not load profile.');
+                }
+            });
+        });
+
+        // Close the modal when the user clicks on <span> (x)
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal when the user clicks anywhere outside of the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
