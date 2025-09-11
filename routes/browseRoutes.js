@@ -13,13 +13,44 @@ function isCompany(req, res, next) {
     }
 }
 
-// GET route to display all job seeker profiles
+// GET route to display all job seeker profiles with search and filters
 router.get('/company/browse_developers', isCompany, async (req, res) => {
+    const { skills, role, location } = req.query; // Get query parameters
+
+    let query = `
+        SELECT 
+            user_id, profile_picture, name, role, skills, work_preferences, location 
+        FROM job_seeker_profiles
+    `;
+
+    const queryParams = [];
+    const whereClauses = [];
+
+    // Dynamically build the WHERE clause based on filters
+    if (skills) {
+        whereClauses.push(`FIND_IN_SET(?, skills)`);
+        queryParams.push(skills.split(',')[0].trim());
+    }
+    if (role) {
+        whereClauses.push(`role = ?`);
+        queryParams.push(role);
+    }
+    if (location) {
+        whereClauses.push(`location = ?`);
+        queryParams.push(location);
+    }
+
+    if (whereClauses.length > 0) {
+        query += ` WHERE ` + whereClauses.join(' AND ');
+    }
+    
     try {
-        const [profiles] = await db.query('SELECT user_id, profile_picture, name, role, skills, work_preferences, location FROM job_seeker_profiles');
+        const [profiles] = await db.query(query, queryParams);
         res.render('browse_developers', {
             title: 'Browse Developers',
-            profiles: profiles
+            profiles: profiles,
+            // Pass the filter values back to the view to pre-fill the form
+            filters: { skills, role, location }
         });
     } catch (error) {
         console.error('Error fetching developer profiles:', error);

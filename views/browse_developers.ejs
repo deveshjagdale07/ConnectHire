@@ -30,22 +30,22 @@
         }
         /* Modal styles */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; 
+            margin: 5% auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; 
+            width: 80%;
             border-radius: 10px;
         }
         .close {
@@ -60,11 +60,56 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .search-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: left;
+        }
+        .search-form input,
+        .search-form select,
+        .search-form button {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <h1>Browse Developers</h1>
-    
+
+    <div class="search-form">
+        <form action="/company/browse_developers" method="GET">
+            <input type="text" name="skills" placeholder="Search by Skills" value="<%= typeof filters !== 'undefined' ? filters.skills : '' %>">
+            
+            <select name="role">
+                <option value="">All Roles</option>
+                <option value="Full-stack Developer" <%= typeof filters !== 'undefined' && filters.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
+                <option value="Frontend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
+                <option value="Backend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
+                <option value="Mobile Developer" <%= typeof filters !== 'undefined' && filters.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
+                <option value="DevOps Engineer" <%= typeof filters !== 'undefined' && filters.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
+            </select>
+
+            <select name="location">
+                <option value="">All Locations</option>
+                <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+                <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+                <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+                <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+                <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+                <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+                <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+                <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
     <div class="profile-list">
         <% if (profiles.length > 0) { %>
             <% profiles.forEach(profile => { %>
@@ -77,7 +122,7 @@
                 </div>
             <% }); %>
         <% } else { %>
-            <p>No developer profiles found.</p>
+            <p>No developer profiles found matching your criteria.</p>
         <% } %>
     </div>
 
@@ -90,74 +135,4 @@
     </div>
     
 </body>
-<script>
-        const modal = document.getElementById("profileModal");
-        const modalBody = document.getElementById("modal-body");
-        const span = document.getElementsByClassName("close")[0];
-
-        document.querySelectorAll('.profile-card').forEach(card => {
-            card.addEventListener('click', async (event) => {
-                const userId = event.currentTarget.dataset.userId;
-
-                // Fetch the full profile data from the new API route
-                const response = await fetch(`/job_seeker/api/profile/${userId}`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    const profile = data.profile;
-                    const certifications = data.certifications;
-
-                    // Build the HTML content for the modal
-                    let skillsList = '';
-                    if (profile.skills) {
-                        skillsList = profile.skills.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
-                    }
-
-                    let certList = '';
-                    certifications.forEach(cert => {
-                        certList += `
-                            <li>
-                                <a href="${cert.file_url}" target="_blank">${cert.name}</a>
-                            </li>
-                        `;
-                    });
-
-                    modalBody.innerHTML = `
-            <h2>${profile.name}'s Profile</h2>
-            <div style="text-align: center;">
-                <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
-            </div>
-            <p><strong>Role:</strong> ${profile.role}</p>
-            <p><strong>Location:</strong> ${profile.location}</p>
-            <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
-            <p><strong>Experience:</strong> ${profile.experience}</p>
-            <p><strong>Projects:</strong> ${profile.projects}</p>
-            <h3>Skills</h3>
-            <ul>${skillsList}</ul>
-            <h3>Certifications</h3>
-            <ul>${certList}</ul>
-            <br>
-            <a href="${profile.resume_url}" target="_blank">Download Resume</a>
-            <hr>
-            <a href="/company/request_job/${profile.user_id}"><button>Hire This Developer</button></a>
-        `;
-        modal.style.display = "block";
-    } else {
-                    alert('Could not load profile.');
-                }
-            });
-        });
-
-        // Close the modal when the user clicks on <span> (x)
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // Close the modal when the user clicks anywhere outside of the modal
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
 </html>
