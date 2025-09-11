@@ -37,23 +37,47 @@ router.get('/job_seeker/requests', isJobSeeker, async (req, res) => {
     }
 });
 
-// GET route to display all job listings for job seekers
+// GET route to display all job listings for job seekers with search and filters
 router.get('/job_seeker/browse_jobs', isJobSeeker, async (req, res) => {
     const jobSeekerId = req.session.user.id;
+    const { role, job_type, location } = req.query; // Get query parameters
+
+    let query = `
+        SELECT 
+            jl.id, jl.role, jl.compensation, jl.job_type, jl.duration, jl.location, jl.description, jl.created_at, 
+            cp.company_name, cp.company_logo,
+            a.id AS application_id
+        FROM job_listings AS jl
+        JOIN company_profiles AS cp ON jl.company_id = cp.user_id
+        LEFT JOIN applications AS a ON jl.id = a.job_id AND a.job_seeker_id = ?
+    `;
+
+    const queryParams = [jobSeekerId];
+    const whereClauses = [];
+
+    if (role) {
+        whereClauses.push(`jl.role LIKE ?`);
+        queryParams.push(`%${role}%`);
+    }
+    if (job_type) {
+        whereClauses.push(`jl.job_type = ?`);
+        queryParams.push(job_type);
+    }
+    if (location) {
+        whereClauses.push(`jl.location = ?`);
+        queryParams.push(location);
+    }
+
+    if (whereClauses.length > 0) {
+        query += ` WHERE ` + whereClauses.join(' AND ');
+    }
+    
     try {
-        const [listings] = await db.query(
-            `SELECT 
-                jl.id, jl.role, jl.compensation, jl.job_type, jl.duration, jl.location, jl.description, jl.created_at, 
-                cp.company_name, cp.company_logo,
-                a.id AS application_id
-            FROM job_listings AS jl
-            JOIN company_profiles AS cp ON jl.company_id = cp.user_id
-            LEFT JOIN applications AS a ON jl.id = a.job_id AND a.job_seeker_id = ?`,
-            [jobSeekerId]
-        );
+        const [listings] = await db.query(query, queryParams);
         res.render('browse_job_listings', {
             title: 'Browse Job Listings',
-            listings: listings
+            listings: listings,
+            filters: { role, job_type, location }
         });
     } catch (error) {
         console.error('Error fetching job listings:', error);
@@ -71,7 +95,7 @@ router.post('/job_seeker/apply_job/:id', isJobSeeker, async (req, res) => {
             'INSERT INTO applications (job_seeker_id, job_id) VALUES (?, ?)',
             [jobSeekerId, jobId]
         );
-        res.redirect('/job_seeker/browse_jobs'); // Corrected redirect
+        res.redirect('/job_seeker/browse_jobs');
     } catch (error) {
         console.error('Error applying for job:', error);
         res.status(500).send('Failed to apply for the job.');

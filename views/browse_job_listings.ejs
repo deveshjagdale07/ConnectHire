@@ -5,9 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .search-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .search-form input,
+        .search-form select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <h1>All Job Listings</h1>
+
+    <div class="search-form">
+        <form action="/job_seeker/browse_jobs" method="GET">
+            <input type="text" name="role" placeholder="Search by Job Role" value="<%= typeof filters !== 'undefined' ? filters.role : '' %>">
+            
+            <select name="job_type">
+                <option value="">All Job Types</option>
+                <option value="Full-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Full-time' ? 'selected' : '' %>>Full-time</option>
+                <option value="Part-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Part-time' ? 'selected' : '' %>>Part-time</option>
+                <option value="Freelance" <%= typeof filters !== 'undefined' && filters.job_type === 'Freelance' ? 'selected' : '' %>>Freelance</option>
+                <option value="Internship" <%= typeof filters !== 'undefined' && filters.job_type === 'Internship' ? 'selected' : '' %>>Internship</option>
+            </select>
+
+            <select name="location">
+                <option value="">All Locations</option>
+                <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+                <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+                <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+                <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+                <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+                <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+                <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+                <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
     <% if (listings.length > 0) { %>
         <% listings.forEach(job => { %>
@@ -32,7 +76,7 @@
             </div>
         <% }); %>
     <% } else { %>
-        <p>There are no job listings at this time.</p>
+        <p>No job listings found matching your criteria.</p>
     <% } %>
 </body>
 </html>
