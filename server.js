@@ -65,7 +65,8 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const browseRoutes = require('./routes/browseRoutes');
 const jobRoutes = require('./routes/jobRoutes');
-const companyRequestsRoutes = require('./routes/companyRequestsRoutes'); 
+const companyRequestsRoutes = require('./routes/companyRequestsRoutes');
+const apiRoutes = require('./routes/apiRoutes');
 
 // Basic home route
 app.get('/', (req, res) => {
@@ -79,6 +80,7 @@ app.use('/', profileRoutes);
 app.use('/', browseRoutes); 
 app.use('/', jobRoutes);
 app.use('/', companyRequestsRoutes);
+app.use('/api', apiRoutes);
 
 // Start the server
 // --------------------------------------------------
