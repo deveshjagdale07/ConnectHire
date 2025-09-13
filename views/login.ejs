@@ -3,22 +3,365 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Login to ConnectHire</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .logo-icon {
+      font-size: 28px;
+      margin-right: 10px;
+    }
+    
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+    }
+    
+    .form-container {
+      padding: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .input-with-icon {
+      position: relative;
+    }
+    
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+    
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+    }
+    
+    .remember-me input {
+      margin-right: 8px;
+    }
+    
+    .forgot-password {
+      color: #2563eb;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    
+    .forgot-password:hover {
+      color: #1e40af;
+      text-decoration: underline;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: #6b7280;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+    
+    .divider-text {
+      padding: 0 15px;
+      font-size: 14px;
+    }
+    
+    .social-login {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .fa-google {
+      color: #db4437;
+    }
+    
+    .fa-linkedin {
+      color: #0a66c2;
+    }
+    
+    .fa-github {
+      color: #333;
+    }
+    
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #6b7280;
+    }
+    
+    .signup-link a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    
+    .signup-link a:hover {
+      color: #1e40af;
+      text-decoration: underline;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .container {
+        border-radius: 12px;
+      }
+      
+      .header {
+        padding: 25px 15px;
+      }
+      
+      .form-container {
+        padding: 25px 20px;
+      }
+      
+      .options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Login to ConnectHire</h1>
-    <form action="/auth/login" method="POST">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
-
-      <button type="submit">Log In</button>
-    </form>
-    <p>Don't have an account? <a href="/auth/register">Sign up here</a></p>
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-handshake logo-icon"></i>
+        <div class="logo-text">ConnectHire</div>
+      </div>
+      <h1>Login to your account</h1>
+    </div>
+    
+    <div class="form-container">
+      <form action="/auth/login" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <span class="password-toggle" id="passwordToggle">
+              <i class="far fa-eye"></i>
+            </span>
+          </div>
+        </div>
+        
+        <div class="options">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="/auth/forgot-password" class="forgot-password">Forgot password?</a>
+        </div>
+        
+        <button type="submit">Log In</button>
+      </form>
+      
+      <div class="divider">
+        <span class="divider-text">Or continue with</span>
+      </div>
+      
+      <div class="social-login">
+        <div class="social-btn">
+          <i class="fab fa-google"></i>
+        </div>
+        <div class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </div>
+        <div class="social-btn">
+          <i class="fab fa-github"></i>
+        </div>
+      </div>
+      
+      <div class="signup-link">
+        Don't have an account? <a href="/auth/register">Sign up here</a>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // Toggle password visibility
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+    
+    passwordToggle.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      // Toggle eye icon
+      const eyeIcon = this.querySelector('i');
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+    
+    // Add animation to form elements
+    document.addEventListener('DOMContentLoaded', function() {
+      const formGroups = document.querySelectorAll('.form-group');
+      formGroups.forEach((group, index) => {
+        group.style.animation = `fadeIn 0.5s ease-out ${index * 0.1 + 0.3}s forwards`;
+        group.style.opacity = '0';
+      });
+    });
+  </script>
 </body>
 </html>
