@@ -7,7 +7,24 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <h1><%= title %></h1>
-  <p>Your responsive platform for developers and hiring companies.</p>
+
+  <header>
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f4f4f4; border-bottom: 1px solid #ddd;">
+      <a href="/" style="font-size: 24px; font-weight: bold; color: #007bff; text-decoration: none;">ConnectHire</a>
+      <div>
+        <a href="/auth/register" style="margin-right: 15px; text-decoration: none; color: #333;">Sign Up</a>
+        <a href="/auth/login" style="text-decoration: none; color: #333;">Log In</a>
+      </div>
+    </nav>
+  </header>
+
+  <main style="text-align: center; margin-top: 50px;">
+    <h1>Welcome to ConnectHire</h1>
+    <p>Your responsive platform for developers and hiring companies.</p>
+    <div style="margin-top: 30px;">
+      <a href="/auth/register" style="padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Get Started</a>
+    </div>
+  </main>
+
 </body>
 </html>
