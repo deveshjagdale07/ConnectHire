@@ -3,28 +3,497 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <title>Register for ConnectHire</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .logo-icon {
+      font-size: 28px;
+      margin-right: 10px;
+    }
+    
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    h1 {
+      font-size: 22px;
+      font-weight: 500;
+    }
+    
+    .form-container {
+      padding: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .input-with-icon {
+      position: relative;
+    }
+    
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+    }
+    
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    
+    .select-wrapper {
+      position: relative;
+    }
+    
+    .select-wrapper::after {
+      content: "\f078";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    
+    .password-requirements {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .requirement {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    
+    .requirement i {
+      margin-right: 8px;
+      font-size: 12px;
+    }
+    
+    .requirement.met {
+      color: #10b981;
+    }
+    
+    .role-options {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .role-option {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .role-option:hover {
+      border-color: #2563eb;
+    }
+    
+    .role-option.selected {
+      border-color: #2563eb;
+      background-color: rgba(37, 99, 235, 0.05);
+    }
+    
+    .role-option i {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #6b7280;
+    }
+    
+    .role-option.selected i {
+      color: #2563eb;
+    }
+    
+    .role-option h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #374151;
+    }
+    
+    .role-option p {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(37, 99, 235, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: #6b7280;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+    
+    .divider-text {
+      padding: 0 15px;
+      font-size: 14px;
+    }
+    
+    .social-register {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .fa-google {
+      color: #db4437;
+    }
+    
+    .fa-linkedin {
+      color: #0a66c2;
+    }
+    
+    .fa-github {
+      color: #333;
+    }
+    
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #6b7280;
+    }
+    
+    .login-link a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+    
+    .login-link a:hover {
+      color: #1e40af;
+      text-decoration: underline;
+    }
+    
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .container {
+        border-radius: 12px;
+      }
+      
+      .header {
+        padding: 25px 15px;
+      }
+      
+      .form-container {
+        padding: 25px 20px;
+      }
+      
+      .role-options {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Register for ConnectHire</h1>
-    <form action="/auth/register" method="POST">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
-
-      <label for="role">I am a:</label>
-      <select id="role" name="role" required>
-        <option value="job_seeker">Job Seeker</option>
-        <option value="company">Hiring Company</option>
-      </select>
-
-      <button type="submit">Sign Up</button>
-    </form>
-    <p>Already have an account? <a href="/auth/login">Login here</a></p>
+    <div class="header">
+      <div class="logo">
+        <i class="fas fa-handshake logo-icon"></i>
+        <div class="logo-text">ConnectHire</div>
+      </div>
+      <h1>Create your account</h1>
+    </div>
+    
+    <div class="form-container">
+      <form action="/auth/register" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+            <span class="password-toggle" id="passwordToggle">
+              <i class="far fa-eye"></i>
+            </span>
+          </div>
+          <div class="password-requirements">
+            <div class="requirement" id="lengthReq">
+              <i class="fas fa-circle"></i>
+              <span>At least 8 characters</span>
+            </div>
+            <div class="requirement" id="numberReq">
+              <i class="fas fa-circle"></i>
+              <span>Contains a number</span>
+            </div>
+            <div class="requirement" id="specialReq">
+              <i class="fas fa-circle"></i>
+              <span>Contains a special character</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>I am a:</label>
+          <div class="role-options">
+            <div class="role-option" data-value="job_seeker">
+              <i class="fas fa-user-tie"></i>
+              <h3>Job Seeker</h3>
+              <p>Looking for opportunities</p>
+            </div>
+            <div class="role-option" data-value="company">
+              <i class="fas fa-building"></i>
+              <h3>Employer</h3>
+              <p>Hiring talent</p>
+            </div>
+          </div>
+          <input type="hidden" id="role" name="role" required>
+        </div>
+        
+        <button type="submit">Create Account</button>
+      </form>
+      
+      <div class="divider">
+        <span class="divider-text">Or sign up with</span>
+      </div>
+      
+      <div class="social-register">
+        <div class="social-btn">
+          <i class="fab fa-google"></i>
+        </div>
+        <div class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </div>
+        <div class="social-btn">
+          <i class="fab fa-github"></i>
+        </div>
+      </div>
+      
+      <div class="login-link">
+        Already have an account? <a href="/auth/login">Login here</a>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // Toggle password visibility
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('password');
+    
+    passwordToggle.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      // Toggle eye icon
+      const eyeIcon = this.querySelector('i');
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+    
+    // Role selection
+    const roleOptions = document.querySelectorAll('.role-option');
+    const roleInput = document.getElementById('role');
+    
+    roleOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        roleOptions.forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        roleInput.value = this.getAttribute('data-value');
+      });
+    });
+    
+    // Password validation
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      
+      // Check length
+      const lengthReq = document.getElementById('lengthReq');
+      if (password.length >= 8) {
+        lengthReq.classList.add('met');
+        lengthReq.innerHTML = '<i class="fas fa-check-circle"></i><span>At least 8 characters</span>';
+      } else {
+        lengthReq.classList.remove('met');
+        lengthReq.innerHTML = '<i class="fas fa-circle"></i><span>At least 8 characters</span>';
+      }
+      
+      // Check for number
+      const numberReq = document.getElementById('numberReq');
+      if (/\d/.test(password)) {
+        numberReq.classList.add('met');
+        numberReq.innerHTML = '<i class="fas fa-check-circle"></i><span>Contains a number</span>';
+      } else {
+        numberReq.classList.remove('met');
+        numberReq.innerHTML = '<i class="fas fa-circle"></i><span>Contains a number</span>';
+      }
+      
+      // Check for special character
+      const specialReq = document.getElementById('specialReq');
+      if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        specialReq.classList.add('met');
+        specialReq.innerHTML = '<i class="fas fa-check-circle"></i><span>Contains a special character</span>';
+      } else {
+        specialReq.classList.remove('met');
+        specialReq.innerHTML = '<i class="fas fa-circle"></i><span>Contains a special character</span>';
+      }
+    });
+    
+    // Add animation to form elements
+    document.addEventListener('DOMContentLoaded', function() {
+      const formGroups = document.querySelectorAll('.form-group');
+      formGroups.forEach((group, index) => {
+        group.style.animation = `fadeIn 0.5s ease-out ${index * 0.1 + 0.3}s forwards`;
+        group.style.opacity = '0';
+      });
+      
+      // Select first role option by default
+      if (roleOptions.length > 0) {
+        roleOptions[0].click();
+      }
+    });
+  </script>
 </body>
 </html>
