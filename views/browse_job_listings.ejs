@@ -5,78 +5,234 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .search-form {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
         }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .search-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
         .search-form input,
-        .search-form select {
-            padding: 8px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .search-form select,
+        .search-form button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-form input:focus,
+        .search-form select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .search-form button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .search-form button:hover {
+            background-color: var(--primary-dark-blue);
+        }
+
+        .job-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .company-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: contain;
+            border: 2px solid var(--border-color);
+        }
+        
+        .job-card h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--primary-dark-blue);
+        }
+
+        .job-details p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+        
+        .job-details p strong {
+            color: var(--text-dark);
+        }
+
+        .apply-button-container {
+            margin-top: 20px;
+        }
+
+        .btn-apply {
+            padding: 10px 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-applied {
+            padding: 10px 20px;
+            background-color: var(--text-gray);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>All Job Listings</h1>
+    <div class="container">
+        <h1>All Job Listings</h1>
 
-    <div class="search-form">
-        <form action="/job_seeker/browse_jobs" method="GET">
-            <input type="text" name="role" placeholder="Search by Job Role" value="<%= typeof filters !== 'undefined' ? filters.role : '' %>">
-            
-            <select name="job_type">
-                <option value="">All Job Types</option>
-                <option value="Full-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Full-time' ? 'selected' : '' %>>Full-time</option>
-                <option value="Part-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Part-time' ? 'selected' : '' %>>Part-time</option>
-                <option value="Freelance" <%= typeof filters !== 'undefined' && filters.job_type === 'Freelance' ? 'selected' : '' %>>Freelance</option>
-                <option value="Internship" <%= typeof filters !== 'undefined' && filters.job_type === 'Internship' ? 'selected' : '' %>>Internship</option>
-            </select>
-
-            <select name="location">
-                <option value="">All Locations</option>
-                <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
-                <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
-                <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
-                <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
-                <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
-                <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
-                <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
-                <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
-            </select>
-
-            <button type="submit">Search</button>
-        </form>
-    </div>
-
-    <% if (listings.length > 0) { %>
-        <% listings.forEach(job => { %>
-            <div class="job-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-                    <img src="<%= job.company_logo || '/images/default_company.png' %>" alt="<%= job.company_name %> Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain;">
-                    <h3><%= job.role %> at <%= job.company_name %></h3>
-                </div>
-                <p><strong>Compensation:</strong> <%= job.compensation %></p>
-                <p><strong>Job Type:</strong> <%= job.job_type %></p>
-                <p><strong>Location:</strong> <%= job.location %></p>
-                <p><strong>Description:</strong> <%= job.description %></p>
-                <p><strong>Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
+        <div class="search-form">
+            <form action="/job_seeker/browse_jobs" method="GET" style="width: 100%; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="text" name="role" placeholder="Search by Job Role" value="<%= typeof filters !== 'undefined' ? filters.role : '' %>">
                 
-                <% if (job.application_id) { %>
-                    <button type="button" disabled style="background-color: #555; color: white;">Applied</button>
-                <% } else { %>
-                    <form action="/job_seeker/apply_job/<%= job.id %>" method="POST">
-                        <button type="submit">Apply</button>
-                    </form>
-                <% } %>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>No job listings found matching your criteria.</p>
-    <% } %>
+                <select name="job_type">
+                    <option value="">All Job Types</option>
+                    <option value="Full-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Full-time' ? 'selected' : '' %>>Full-time</option>
+                    <option value="Part-time" <%= typeof filters !== 'undefined' && filters.job_type === 'Part-time' ? 'selected' : '' %>>Part-time</option>
+                    <option value="Freelance" <%= typeof filters !== 'undefined' && filters.job_type === 'Freelance' ? 'selected' : '' %>>Freelance</option>
+                    <option value="Internship" <%= typeof filters !== 'undefined' && filters.job_type === 'Internship' ? 'selected' : '' %>>Internship</option>
+                </select>
+
+                <select name="location">
+                    <option value="">All Locations</option>
+                    <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+                    <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+                    <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+                    <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+                    <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+                    <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+                    <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+                    <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <% if (listings.length > 0) { %>
+            <% listings.forEach(job => { %>
+                <div class="job-card">
+                    <div class="company-info">
+                        <img src="<%= job.company_logo || '/images/default_company.png' %>" alt="<%= job.company_name %> Logo">
+                        <h3><%= job.role %> at <%= job.company_name %></h3>
+                    </div>
+                    <div class="job-details">
+                        <p><strong>Compensation:</strong> <%= job.compensation %></p>
+                        <p><strong>Job Type:</strong> <%= job.job_type %></p>
+                        <p><strong>Location:</strong> <%= job.location %></p>
+                        <p><strong>Description:</strong> <%= job.description %></p>
+                        <p><strong>Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
+                    </div>
+
+                    <div class="apply-button-container">
+                        <% if (job.application_id) { %>
+                            <button type="button" class="btn-applied" disabled>Applied</button>
+                        <% } else { %>
+                            <form action="/job_seeker/apply_job/<%= job.id %>" method="POST">
+                                <button type="submit" class="btn-apply">Apply</button>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p style="text-align: center; color: var(--text-gray);">No job listings found matching your criteria.</p>
+        <% } %>
+    </div>
 </body>
 </html>
