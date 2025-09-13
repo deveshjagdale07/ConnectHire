@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Your Messages</h1>
+    <% if (conversations.length > 0) { %>
+        <% conversations.forEach(convo => { %>
+            <a href="/messages/<%= convo.partner_id %>">
+                <div class="conversation-item">
+                    <img src="<%= convo.partner_picture || '/images/default_avatar.png' %>">
+                    <div>
+                        <strong><%= convo.partner_name %></strong>
+                        <p>Last message: <%= new Date(convo.last_updated).toLocaleString() %></p>
+                    </div>
+                </div>
+            </a>
+        <% }); %>
+    <% } else { %>
+        <p>You have no ongoing conversations.</p>
+    <% } %>
+</body>
+</html>

@@ -68,6 +68,7 @@ const jobRoutes = require('./routes/jobRoutes');
 const companyRequestsRoutes = require('./routes/companyRequestsRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const messagingRoutes = require('./routes/messagingRoutes');
 
 // Basic home route
 app.get('/', (req, res) => {
@@ -83,6 +84,7 @@ app.use('/', jobRoutes);
 app.use('/', companyRequestsRoutes);
 app.use('/api', apiRoutes);
 app.use('/', notificationRoutes);
+app.use('/', messagingRoutes);
 // Start the server
 // --------------------------------------------------
 

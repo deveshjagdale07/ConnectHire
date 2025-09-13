@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1><%= title %></h1>
+    <div class="message-history">
+        <% messages.forEach(message => { %>
+            <div class="message-bubble <%= message.sender_id === userId ? 'sent' : 'received' %>">
+                <p><%= message.body %></p>
+                <small><%= new Date(message.created_at).toLocaleString() %></small>
+            </div>
+        <% }); %>
+    </div>
+    <form action="/messages/<%= partnerId %>" method="POST">
+        <textarea name="messageBody" placeholder="Type your message..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
