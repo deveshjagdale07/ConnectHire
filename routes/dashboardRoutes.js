@@ -13,22 +13,35 @@ function requireLogin(req, res, next) {
     }
 }
 
-// Middleware to fetch unread notification count
-router.use(async (req, res, next) => {
-    if (req.session.user) {
-        const userId = req.session.user.id;
-        const [countRows] = await db.query('SELECT COUNT(*) AS count FROM notifications WHERE user_id = ? AND is_read = FALSE', [userId]);
-        res.locals.unreadCount = countRows[0].count;
-    }
-    next();
-});
 // Job Seeker Dashboard
-router.get('/job_seeker/dashboard', requireLogin, (req, res) => {
+router.get('/job_seeker/dashboard', requireLogin, async (req, res) => {
     if (req.session.user.role === 'job_seeker') {
-        res.render('job_seeker_dashboard', {
-            title: 'Job Seeker Dashboard',
-            user: req.session.user
-        });
+        const userId = req.session.user.id;
+        try {
+            // Fetch user's profile details
+            const [profileRows] = await db.query('SELECT name, profile_picture FROM job_seeker_profiles WHERE user_id = ?', [userId]);
+            const profile = profileRows[0];
+
+            // Fetch counts for dashboard stats
+            const [pendingRequestsCountRows] = await db.query('SELECT COUNT(*) AS count FROM job_requests WHERE job_seeker_id = ? AND status = ?', [userId, 'pending']);
+            const [pendingApplicationsCountRows] = await db.query('SELECT COUNT(*) AS count FROM applications WHERE job_seeker_id = ? AND status = ?', [userId, 'pending']);
+            const [unreadNotificationsCountRows] = await db.query('SELECT COUNT(*) AS count FROM notifications WHERE user_id = ? AND is_read = FALSE', [userId]);
+
+            res.render('job_seeker_dashboard', {
+                title: 'Job Seeker Dashboard',
+                user: req.session.user,
+                // Handle the case where the profile might not exist yet
+                profile: profile || { name: 'New User', profile_picture: '/images/default_avatar.png' },
+                stats: {
+                    pendingRequests: pendingRequestsCountRows[0].count,
+                    pendingApplications: pendingApplicationsCountRows[0].count,
+                    unreadNotifications: unreadNotificationsCountRows[0].count
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching job seeker dashboard data:', error);
+            res.status(500).send('An error occurred while fetching dashboard data.');
+        }
     } else {
         res.status(403).send("Access Denied");
     }
@@ -41,18 +54,13 @@ router.post('/job_seeker/accept_request/:id', requireLogin, async (req, res) => 
 
     try {
         await db.query('UPDATE job_requests SET status = ? WHERE id = ? AND job_seeker_id = ?', ['accepted', requestId, userId]);
-
-        // Create a notification for the company
+        
         const [requestRows] = await db.query('SELECT company_id, role FROM job_requests WHERE id = ?', [requestId]);
         const companyId = requestRows[0].company_id;
         const role = requestRows[0].role;
         const [seekerRows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [userId]);
         const seekerName = seekerRows[0].name;
-
-        await db.query(
-            'INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)',
-            [companyId, `${seekerName} has accepted your job request for the role of ${role}.`, `/company/sent_requests`]
-        );
+        await db.query('INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)', [companyId, `${seekerName} has accepted your job request for the role of ${role}.`, `/company/sent_requests`]);
 
         res.redirect('/job_seeker/requests');
     } catch (error) {
@@ -68,7 +76,15 @@ router.post('/job_seeker/reject_request/:id', requireLogin, async (req, res) => 
 
     try {
         await db.query('UPDATE job_requests SET status = ? WHERE id = ? AND job_seeker_id = ?', ['rejected', requestId, userId]);
-        res.redirect('/job_seeker/dashboard');
+        
+        const [requestRows] = await db.query('SELECT company_id, role FROM job_requests WHERE id = ?', [requestId]);
+        const companyId = requestRows[0].company_id;
+        const role = requestRows[0].role;
+        const [seekerRows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [userId]);
+        const seekerName = seekerRows[0].name;
+        await db.query('INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)', [companyId, `${seekerName} has rejected your job request for the role of ${role}.`, `/company/sent_requests`]);
+
+        res.redirect('/job_seeker/requests');
     } catch (error) {
         console.error('Error rejecting job request:', error);
         res.status(500).send('Failed to reject job request.');
@@ -76,32 +92,60 @@ router.post('/job_seeker/reject_request/:id', requireLogin, async (req, res) => 
 });
 
 // Company Dashboard
-router.get('/company/dashboard', requireLogin, (req, res) => {
+router.get('/company/dashboard', requireLogin, async (req, res) => {
     if (req.session.user.role === 'company') {
-        res.render('company_dashboard', { 
-            title: 'Company Dashboard',
-            user: req.session.user
-        });
+        const userId = req.session.user.id;
+        try {
+            // Fetch company profile details
+            const [profileRows] = await db.query('SELECT company_name, company_logo FROM company_profiles WHERE user_id = ?', [userId]);
+            const profile = profileRows[0];
+            
+            // Handle the case where the profile might not exist yet
+            if (!profile) {
+                res.render('company_dashboard', {
+                    title: 'Company Dashboard',
+                    user: req.session.user,
+                    profile: { company_name: 'New Company', company_logo: '/images/default_company.png' },
+                    requests: []
+                });
+                return;
+            }
+            
+            const [requests] = await db.query(
+                `SELECT 
+                    jr.id, jr.role, jr.compensation, jr.duration, jr.job_type, jr.location, jr.status, 
+                    jsp.name, jsp.profile_picture
+                FROM job_requests AS jr
+                JOIN job_seeker_profiles AS jsp ON jr.job_seeker_id = jsp.user_id
+                WHERE jr.company_id = ?`,
+                [userId]
+            );
+            res.render('company_dashboard', {
+                title: 'Company Dashboard',
+                user: req.session.user,
+                profile: profile,
+                requests: requests
+            });
+        } catch (error) {
+            console.error('Error fetching sent requests:', error);
+            res.status(500).send('An error occurred while fetching your sent requests.');
+        }
     } else {
         res.status(403).send("Access Denied");
     }
 });
 
 // Admin Dashboard
-// Admin Dashboard
 router.get('/admin/dashboard', requireLogin, async (req, res) => {
     if (req.session.user.role === 'admin') {
         try {
-            // Fetch all users and all job requests
             const [allUsers] = await db.query('SELECT id, email, role, created_at FROM users');
             const [allJobRequests] = await db.query('SELECT * FROM job_requests');
-
-            // Pass the fetched data to the EJS view
             res.render('admin_dashboard', {
                 title: 'Admin Dashboard',
                 user: req.session.user,
-                allUsers: allUsers,          // <-- This variable must be passed
-                allJobRequests: allJobRequests // <-- This variable must be passed
+                allUsers: allUsers,
+                allJobRequests: allJobRequests
             });
         } catch (error) {
             console.error('Error fetching admin dashboard data:', error);

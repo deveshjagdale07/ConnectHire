@@ -1,17 +1,328 @@
-<h1>Welcome, Job Seeker!</h1>
-<p>This is your personalized dashboard.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --secondary-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --info-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 6px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 30px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            opacity: 0.03;
+            z-index: 0;
+        }
+        
+        .dashboard-header img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .dashboard-header img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .welcome-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .welcome-text p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+        }
+        
+        .stat-card:nth-child(1)::before {
+            background: var(--secondary-gradient);
+        }
+        
+        .stat-card:nth-child(2)::before {
+            background: var(--primary-gradient);
+        }
+        
+        .stat-card:nth-child(3)::before {
+            background: var(--success-gradient);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-info h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .stat-info p {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+        }
+        
+        .stat-card:nth-child(1) .stat-info p {
+            color: #f59e0b;
+        }
+        
+        .stat-card:nth-child(2) .stat-info p {
+            color: #2563eb;
+        }
+        
+        .stat-card:nth-child(3) .stat-info p {
+            color: #10b981;
+        }
+        
+        .stat-icon {
+            font-size: 2.8rem;
+            opacity: 0.2;
+            transition: opacity 0.3s ease;
+        }
+        
+        .stat-card:hover .stat-icon {
+            opacity: 0.3;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            color: #1e293b;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--primary-gradient);
+        }
+        
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .quick-link-card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            text-decoration: none;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .quick-link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+            color: #2563eb;
+        }
+        
+        .quick-link-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--primary-gradient);
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .quick-link-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .quick-link-content p {
+            color: #64748b;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .welcome-text h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <img src="<%= profile.profile_picture || '/images/default_avatar.png' %>" alt="<%= profile.name || 'Profile' %> Profile Picture">
+            <div class="welcome-text">
+                <h1>Welcome, <%= profile.name || 'New User' %>!</h1>
+                <p>Here's your personalized dashboard with activity overview</p>
+            </div>
+        </div>
 
-<a href="/job_seeker/create_profile">Create My Profile</a>
-<br><br>
-<a href="/job_seeker/profile/<%= user.id %>">View My Profile</a>
-<br><br>
-<a href="/job_seeker/requests">View All Job Requests</a>
-<br><br>
-<a href="/job_seeker/browse_jobs">Browse All Jobs</a>
-<br><br>
-<a href="/job_seeker/my_applications">View My Applications</a>
-<a href="/notifications" style="float: right;">
-    Notifications (<%= typeof unreadCount !== 'undefined' ? unreadCount : 0 %>)
-</a>
-<br><br>
-<a href="/messages">Messages</a>
+        <div class="stats-grid">
+            <a href="/job_seeker/requests" class="stat-card">
+                <div class="stat-info">
+                    <h3>New Requests</h3>
+                    <p><%= stats.pendingRequests %></p>
+                </div>
+                <i class="fas fa-handshake stat-icon"></i>
+            </a>
+            <a href="/job_seeker/my_applications" class="stat-card">
+                <div class="stat-info">
+                    <h3>Pending Applications</h3>
+                    <p><%= stats.pendingApplications %></p>
+                </div>
+                <i class="fas fa-briefcase stat-icon"></i>
+            </a>
+            <a href="/notifications" class="stat-card">
+                <div class="stat-info">
+                    <h3>Unread Notifications</h3>
+                    <p><%= stats.unreadNotifications %></p>
+                </div>
+                <i class="fas fa-bell stat-icon"></i>
+            </a>
+        </div>
+
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="quick-links">
+            <a href="/job_seeker/browse_jobs" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="quick-link-content">
+                    <h3>Browse All Jobs</h3>
+                    <p>Find your next opportunity from hundreds of listings</p>
+                </div>
+            </a>
+            <a href="/job_seeker/create_profile" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <div class="quick-link-content">
+                    <h3>Update My Profile</h3>
+                    <p>Keep your profile fresh to attract more employers</p>
+                </div>
+            </a>
+            <a href="/messages" class="quick-link-card">
+                <div class="quick-link-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="quick-link-content">
+                    <h3>Messages</h3>
+                    <p>Connect with employers and manage conversations</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
