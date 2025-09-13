@@ -5,37 +5,418 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .notification-card {
-            padding: 15px;
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 16px;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 15px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+            border-radius: 2px;
+        }
+
+        .header p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .notification-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .notification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-blue), var(--accent-cyan));
+            transition: var(--transition);
+        }
+
+        .notification-card.read-notification::before {
+            background: var(--border-color);
+            width: 3px;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .notification-card:hover::before {
+            width: 6px;
+        }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .read-notification .notification-icon {
+            background: var(--border-color);
+            color: var(--text-gray);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-content p {
+            margin: 0 0 12px 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .notification-content small {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-content small i {
+            font-size: 0.8rem;
+        }
+
+        .unread-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background-color: var(--primary-blue);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .unread-badge i {
+            margin-right: 4px;
+            font-size: 0.7rem;
+        }
+        
+        .action-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .action-links a,
+        .action-links button {
+            text-decoration: none;
+            padding: 10px 18px;
             border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
         }
-        .read-notification {
-            background-color: #f9f9f9;
+
+        .action-links a {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+            color: white;
+            box-shadow: var(--shadow-sm);
         }
-        .unread-notification {
-            background-color: #eaf6ff;
+
+        .action-links a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
+        }
+
+        .action-links button {
+            background-color: transparent;
+            color: var(--text-gray);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-links button:hover {
+            background-color: var(--border-color);
+            color: var(--text-dark);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            font-size: 2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .filter-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: white;
+            color: var(--text-gray);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark-blue) 100%);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .filter-btn:hover:not(.active) {
+            background: var(--border-color);
+            color: var(--text-dark);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 20px auto;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .notification-card {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .action-links {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .filter-options {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .action-links {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .action-links a,
+            .action-links button {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Your Notifications</h1>
-    <% if (notifications.length > 0) { %>
-        <% notifications.forEach(notification => { %>
-            <div class="notification-card <%= notification.is_read ? 'read-notification' : 'unread-notification' %>">
-                <p><%= notification.message %></p>
-                <small>Received on <%= new Date(notification.created_at).toLocaleString() %></small>
-                <a href="<%= notification.related_url %>" style="float: right; margin-right: 10px;">Go to Link</a>
-                <% if (!notification.is_read) { %>
-                    <form action="/notifications/mark_as_read/<%= notification.id %>" method="POST" style="display: inline;">
-                        <button type="submit" style="float: right;">Mark as Read</button>
-                    </form>
-                <% } %>
+    <div class="container">
+        <div class="header">
+            <h1>Your Notifications</h1>
+            <p>Stay updated with your latest activities and opportunities</p>
+        </div>
+
+        <div class="filter-options">
+            <button class="filter-btn active">
+                <i class="fas fa-bell"></i> All Notifications
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-envelope"></i> Unread Only
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-check-circle"></i> Mark All Read
+            </button>
+        </div>
+
+        <% if (notifications.length > 0) { %>
+            <% notifications.forEach(notification => { %>
+                <div class="notification-card <%= notification.is_read ? 'read-notification' : 'unread-notification' %>">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    
+                    <div class="notification-content">
+                        <p><%= notification.message %></p>
+                        <small>
+                            <i class="far fa-clock"></i>
+                            Received on <%= new Date(notification.created_at).toLocaleString('en-US', { 
+                                weekday: 'short', 
+                                year: 'numeric', 
+                                month: 'short', 
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }) %>
+                            <% if (!notification.is_read) { %>
+                                <span class="unread-badge"><i class="fas fa-circle"></i> New</span>
+                            <% } %>
+                        </small>
+                    </div>
+                    
+                    <div class="action-links">
+                        <a href="<%= notification.related_url %>">
+                            <i class="fas fa-external-link-alt"></i> View
+                        </a>
+                        <% if (!notification.is_read) { %>
+                            <form action="/notifications/mark_as_read/<%= notification.id %>" method="POST">
+                                <button type="submit">
+                                    <i class="fas fa-check"></i> Mark Read
+                                </button>
+                            </form>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="empty-state">
+                <i class="far fa-bell"></i>
+                <h3>No Notifications Yet</h3>
+                <p>You don't have any notifications at this time. We'll notify you when something important happens.</p>
             </div>
-        <% }); %>
-    <% } else { %>
-        <p>You have no notifications at this time.</p>
-    <% } %>
+        <% } %>
+    </div>
+
+    <script>
+        // Simple animation for notifications when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const notifications = document.querySelectorAll('.notification-card');
+            notifications.forEach((notification, index) => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    notification.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    notification.style.opacity = '1';
+                    notification.style.transform = 'translateX(0)';
+                }, 100 + (index * 100));
+            });
+        });
+    </script>
 </body>
 </html>
