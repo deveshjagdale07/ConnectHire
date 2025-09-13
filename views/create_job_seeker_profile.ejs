@@ -3,86 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Profile</title>
+    <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/autocomplete.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark-blue);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .form-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        input[type="text"], 
+        input[type="email"], 
+        input[type="url"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, 
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark-blue));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .autocomplete-item:hover {
+            background-color: var(--border-color);
+        }
+
+        #skills-dropdown-list {
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .selected-skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            min-height: 35px;
+            padding: 5px;
+            background-color: var(--light-bg);
+            border-radius: 8px;
+        }
+
+        .skill-tag {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .remove-skill {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Create Your Developer Profile</h1>
-    <form action="/job_seeker/create_profile" method="POST" enctype="multipart/form-data">
-        <label for="profile_picture">Profile Picture:</label>
-        <input type="file" id="profile_picture" name="profile_picture"><br>
+    <div class="container">
+        <h1>Create Your Developer Profile</h1>
+        <form action="/job_seeker/create_profile" method="POST" enctype="multipart/form-data" class="form-section">
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture:</label>
+                <input type="file" id="profile_picture" name="profile_picture">
+            </div>
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
 
-        <label for="role">Role:</label>
-        <select id="role" name="role" required>
-            <option value="">Select a Role</option>
-            <option value="Full-stack Developer">Full-stack Developer</option>
-            <option value="Frontend Developer">Frontend Developer</option>
-            <option value="Backend Developer">Backend Developer</option>
-            <option value="Mobile Developer">Mobile Developer</option>
-            <option value="DevOps Engineer">DevOps Engineer</option>
-            <option value="UI/UX Designer">UI/UX Designer</option>
-        </select><br>
+            <div class="form-group">
+                <label for="role">Role:</label>
+                <select id="role" name="role" required>
+                    <option value="">Select a Role</option>
+                    <option value="Full-stack Developer">Full-stack Developer</option>
+                    <option value="Frontend Developer">Frontend Developer</option>
+                    <option value="Backend Developer">Backend Developer</option>
+                    <option value="Mobile Developer">Mobile Developer</option>
+                    <option value="DevOps Engineer">DevOps Engineer</option>
+                    <option value="UI/UX Designer">UI/UX Designer</option>
+                </select>
+            </div>
 
-        <label for="skills">Skills (Start typing to search):</label>
-        <input type="text" id="skills-input" name="skills-input">
-        <div id="skills-dropdown-list"></div>
-        <input type="hidden" id="skills" name="skills">
+            <div class="form-group">
+                <label for="skills">Skills (Start typing to search):</label>
+                <input type="text" id="skills-input" name="skills-input">
+                <div id="skills-dropdown-list"></div>
+                <div id="selected-skills-container" class="selected-skills-container"></div>
+                <input type="hidden" id="skills" name="skills">
+            </div>
+            
+            <div class="form-group">
+                <label for="work_preferences">Work Preferences:</label>
+                <select id="work_preferences" name="work_preferences" required>
+                    <option value="">Select Work Preference</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Remote">Remote</option>
+                    <option value="On-site">On-site</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="projects">Projects:</label>
+                <textarea id="projects" name="projects" placeholder="Describe your key projects"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="experience">Experience:</label>
+                <textarea id="experience" name="experience" placeholder="Describe your work experience"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <select id="location" name="location" required>
+                    <option value="">Select a Location</option>
+                    <option value="Jalgaon">Jalgaon</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Remote">Remote</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="resume_file">Resume File (PDF only):</label>
+                <input type="file" id="resume_file" name="resume_file">
+            </div>
+            <button type="submit">Create Profile</button>
+        </form>
+
+        <h3 class="section-title">Certifications</h3>
+        <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data" class="form-section">
+            <div class="form-group">
+                <label for="certificate_name">Certificate Name:</label>
+                <input type="text" id="certificate_name" name="certificate_name" required>
+            </div>
         
-        <br>
+            <div class="form-group">
+                <label for="certificate_file">Certificate File:</label>
+                <input type="file" id="certificate_file" name="certificate_file" required>
+            </div>
         
-        <label for="work_preferences">Work Preferences:</label>
-        <select id="work_preferences" name="work_preferences" required>
-            <option value="">Select Work Preference</option>
-            <option value="Full-time">Full-time</option>
-            <option value="Part-time">Part-time</option>
-            <option value="Freelance">Freelance</option>
-            <option value="Remote">Remote</option>
-            <option value="On-site">On-site</option>
-            <option value="Hybrid">Hybrid</option>
-        </select><br>
-
-        <label for="projects">Projects:</label>
-        <textarea id="projects" name="projects" placeholder="Describe your key projects"></textarea><br>
-        
-        <label for="experience">Experience:</label>
-        <textarea id="experience" name="experience" placeholder="Describe your work experience"></textarea><br>
-
-        <label for="location">Location:</label>
-        <select id="location" name="location" required>
-            <option value="">Select a Location</option>
-            <option value="Jalgaon">Jalgaon</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Pune">Pune</option>
-            <option value="Bangalore">Bangalore</option>
-            <option value="Delhi">Delhi</option>
-            <option value="Chennai">Chennai</option>
-            <option value="Hyderabad">Hyderabad</option>
-            <option value="Remote">Remote</option>
-        </select><br>
-
-        <label for="resume_file">Resume File (PDF only):</label>
-        <input type="file" id="resume_file" name="resume_file"><br>
-
-        <button type="submit">Create Profile</button>
-    </form>
-
-    <br>
-    <hr>
-    <h3>Add Certifications</h3>
-    <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data">
-        <label for="certificate_name">Certificate Name:</label>
-        <input type="text" id="certificate_name" name="certificate_name" required><br>
-    
-        <label for="certificate_file">Certificate File:</label>
-        <input type="file" id="certificate_file" name="certificate_file" required><br>
-    
-        <button type="submit">Add Certificate</button>
-    </form>
+            <button type="submit">Add Certificate</button>
+        </form>
+    </div>
     
     <script src="/js/autocomplete.js"></script>
 </body>

@@ -3,116 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile</title>
+    <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/autocomplete.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .profile-completion {
+            margin-bottom: 30px;
+        }
+        
+        .profile-completion h3 {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 50px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--success-color), #82e982);
+            transition: width 0.4s ease;
+            border-radius: 50px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        input[type="text"], 
+        input[type="email"], 
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, 
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .profile-image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 2px solid var(--primary-blue);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark-blue);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .certification-item, .project-item {
+            background: var(--light-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .certification-item a, .project-item a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .certification-item button, .project-item button {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .certification-item button:hover, .project-item button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-update {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark-blue));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .btn-update:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Update Your Developer Profile</h1>
 
-    <h1>Update Your Developer Profile</h1>
-
-    <div class="profile-completion">
-        <h3>Profile Completion: <span id="completion-text"></span>%</h3>
-        <div class="progress-bar-container">
-            <div id="progress-bar" class="progress-bar"></div>
+        <div class="profile-completion">
+            <h3>Profile Completion: <span id="completion-text"></span>%</h3>
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
         </div>
-    </div>
-    <br>
+        
+        <form action="/job_seeker/update_profile" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="profile_picture">Profile Picture:</label>
+                <input type="file" id="profile_picture" name="profile_picture"><br>
 
-    <form action="/job_seeker/update_profile" method="POST" enctype="multipart/form-data">
-        <label for="profile_picture">Profile Picture:</label>
-        <input type="file" id="profile_picture" name="profile_picture"><br>
+                <% if (profile.profile_picture) { %>
+                    <img src="<%= profile.profile_picture %>" alt="Current Profile Picture" class="profile-image-preview"><br>
+                <% } %>
+            </div>
 
-        <% if (profile.profile_picture) { %>
-            <img src="<%= profile.profile_picture %>" alt="Current Profile Picture" style="width: 100px; height: 100px;"><br>
-        <% } %>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" value="<%= profile.name %>" required>
+            </div>
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="<%= profile.name %>" required><br>
+            <div class="form-group">
+                <label for="role">Role:</label>
+                <select id="role" name="role" required>
+                    <option value="">Select a Role</option>
+                    <option value="Full-stack Developer" <%= profile.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
+                    <option value="Frontend Developer" <%= profile.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
+                    <option value="Backend Developer" <%= profile.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
+                    <option value="Mobile Developer" <%= profile.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
+                    <option value="DevOps Engineer" <%= profile.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
+                    <option value="UI/UX Designer" <%= profile.role === 'UI/UX Designer' ? 'selected' : '' %>>UI/UX Designer</option>
+                </select>
+            </div>
 
-        <label for="role">Role:</label>
-        <select id="role" name="role" required>
-            <option value="">Select a Role</option>
-            <option value="Full-stack Developer" <%= profile.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
-            <option value="Frontend Developer" <%= profile.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
-            <option value="Backend Developer" <%= profile.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
-            <option value="Mobile Developer" <%= profile.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
-            <option value="DevOps Engineer" <%= profile.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
-            <option value="UI/UX Designer" <%= profile.role === 'UI/UX Designer' ? 'selected' : '' %>>UI/UX Designer</option>
-        </select><br>
+            <div class="form-group">
+                <label for="skills">Skills (Start typing to search):</label>
+                <input type="text" id="skills-input" name="skills-input">
+                <div id="skills-dropdown-list"></div>
+                <input type="hidden" id="skills" name="skills" value="<%= profile.skills %>">
+            </div>
+            
+            <div class="form-group">
+                <label for="work_preferences">Work Preferences:</label>
+                <select id="work_preferences" name="work_preferences" required>
+                    <option value="">Select Work Preference</option>
+                    <option value="Full-time" <%= profile.work_preferences === 'Full-time' ? 'selected' : '' %>>Full-time</option>
+                    <option value="Part-time" <%= profile.work_preferences === 'Part-time' ? 'selected' : '' %>>Part-time</option>
+                    <option value="Freelance" <%= profile.work_preferences === 'Freelance' ? 'selected' : '' %>>Freelance</option>
+                    <option value="Remote" <%= profile.work_preferences === 'Remote' ? 'selected' : '' %>>Remote</option>
+                    <option value="On-site" <%= profile.work_preferences === 'On-site' ? 'selected' : '' %>>On-site</option>
+                    <option value="Hybrid" <%= profile.work_preferences === 'Hybrid' ? 'selected' : '' %>>Hybrid</option>
+                </select>
+            </div>
 
-        <label for="skills">Skills (Start typing to search):</label>
-        <input type="text" id="skills-input" name="skills-input">
-        <div id="skills-dropdown-list"></div>
-        <input type="hidden" id="skills" name="skills" value="<%= profile.skills %>">
+            <div class="form-group">
+                <label for="projects">Projects:</label>
+                <textarea id="projects" name="projects"><%= profile.projects %></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="experience">Experience:</label>
+                <textarea id="experience" name="experience"><%= profile.experience %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <select id="location" name="location" required>
+                    <option value="">Select a Location</option>
+                    <option value="Jalgaon" <%= profile.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+                    <option value="Mumbai" <%= profile.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+                    <option value="Pune" <%= profile.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+                    <option value="Bangalore" <%= profile.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+                    <option value="Delhi" <%= profile.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+                    <option value="Chennai" <%= profile.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+                    <option value="Hyderabad" <%= profile.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+                    <option value="Remote" <%= profile.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="resume_file">Resume File (PDF only):</label>
+                <input type="file" id="resume_file" name="resume_file">
+                <% if (profile.resume_url) { %>
+                    <p>Current Resume: <a href="<%= profile.resume_url %>" target="_blank">Download Here</a></p>
+                <% } %>
+            </div>
+
+            <button type="submit" class="btn-update">Update Profile</button>
+        </form>
+
+        <h3 class="section-title">Certifications</h3>
+        <div id="certifications-list">
+            <% certifications.forEach(cert => { %>
+                <div class="certification-item">
+                    <span><a href="<%= cert.file_url %>" target="_blank"><%= cert.name %></a></span>
+                    <form action="/job_seeker/delete_certificate/<%= cert.id %>" method="POST" style="display: inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </div>
+            <% }); %>
+        </div>
+        
         <br>
         
-        <label for="work_preferences">Work Preferences:</label>
-        <select id="work_preferences" name="work_preferences" required>
-            <option value="">Select Work Preference</option>
-            <option value="Full-time" <%= profile.work_preferences === 'Full-time' ? 'selected' : '' %>>Full-time</option>
-            <option value="Part-time" <%= profile.work_preferences === 'Part-time' ? 'selected' : '' %>>Part-time</option>
-            <option value="Freelance" <%= profile.work_preferences === 'Freelance' ? 'selected' : '' %>>Freelance</option>
-            <option value="Remote" <%= profile.work_preferences === 'Remote' ? 'selected' : '' %>>Remote</option>
-            <option value="On-site" <%= profile.work_preferences === 'On-site' ? 'selected' : '' %>>On-site</option>
-            <option value="Hybrid" <%= profile.work_preferences === 'Hybrid' ? 'selected' : '' %>>Hybrid</option>
-        </select><br>
-
-        <label for="projects">Projects:</label>
-        <textarea id="projects" name="projects"><%= profile.projects %></textarea><br>
-        
-        <label for="experience">Experience:</label>
-        <textarea id="experience" name="experience"><%= profile.experience %></textarea><br>
-
-        <label for="location">Location:</label>
-        <select id="location" name="location" required>
-            <option value="">Select a Location</option>
-            <option value="Jalgaon" <%= profile.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
-            <option value="Mumbai" <%= profile.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
-            <option value="Pune" <%= profile.location === 'Pune' ? 'selected' : '' %>>Pune</option>
-            <option value="Bangalore" <%= profile.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
-            <option value="Delhi" <%= profile.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
-            <option value="Chennai" <%= profile.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
-            <option value="Hyderabad" <%= profile.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
-            <option value="Remote" <%= profile.location === 'Remote' ? 'selected' : '' %>>Remote</option>
-        </select><br>
-
-        <label for="resume_file">Resume File (PDF only):</label>
-        <input type="file" id="resume_file" name="resume_file"><br>
-
-        <% if (profile.resume_url) { %>
-            <p>Current Resume: <a href="<%= profile.resume_url %>" target="_blank">Download Here</a></p>
-        <% } %>
-
-        <button type="submit">Update Profile</button>
-    </form>
-
-    <br>
-    <hr>
-    <h3>Certifications</h3>
-    <div id="certifications-list">
-        <% certifications.forEach(cert => { %>
-            <div class="certification-item">
-                <a href="<%= cert.file_url %>" target="_blank"><%= cert.name %></a>
-                <form action="/job_seeker/delete_certificate/<%= cert.id %>" method="POST" style="display: inline;">
-                    <button type="submit">Delete</button>
-                </form>
+        <h4 class="section-title">Add New Certificate</h4>
+        <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="certificate_name">Certificate Name:</label>
+                <input type="text" id="certificate_name" name="certificate_name" required>
             </div>
-        <% }); %>
+        
+            <div class="form-group">
+                <label for="certificate_file">Certificate File:</label>
+                <input type="file" id="certificate_file" name="certificate_file" required>
+            </div>
+        
+            <button type="submit" class="btn-update">Add Certificate</button>
+        </form>
     </div>
-    
-    <br>
-    
-    <h4>Add New Certificate</h4>
-    <form action="/job_seeker/add_certificate" method="POST" enctype="multipart/form-data">
-        <label for="certificate_name">Certificate Name:</label>
-        <input type="text" id="certificate_name" name="certificate_name" required><br>
-    
-        <label for="certificate_file">Certificate File:</label>
-        <input type="file" id="certificate_file" name="certificate_file" required><br>
-    
-        <button type="submit">Add Certificate</button>
-    </form>
     
     <script src="/js/autocomplete.js"></script>
 

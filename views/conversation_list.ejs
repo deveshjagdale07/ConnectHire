@@ -1,25 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .conversation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .conversation-item {
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .conversation-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .conversation-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .conversation-item:hover img {
+            border-color: white;
+        }
+        
+        .conversation-item h3 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--text-dark);
+            transition: color 0.3s ease;
+        }
+
+        .conversation-item:hover h3 {
+            color: white;
+        }
+        
+        .conversation-item p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            transition: color 0.3s ease;
+        }
+
+        .conversation-item:hover p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .no-conversations {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Your Messages</h1>
-    <% if (conversations.length > 0) { %>
-        <% conversations.forEach(convo => { %>
-            <a href="/messages/<%= convo.partner_id %>">
-                <div class="conversation-item">
-                    <img src="<%= convo.partner_picture || '/images/default_avatar.png' %>">
-                    <div>
-                        <strong><%= convo.partner_name %></strong>
-                        <p>Last message: <%= new Date(convo.last_updated).toLocaleString() %></p>
-                    </div>
-                </div>
-            </a>
-        <% }); %>
-    <% } else { %>
-        <p>You have no ongoing conversations.</p>
-    <% } %>
+    <div class="container">
+        <h1>Your Messages</h1>
+        
+        <div class="conversation-list">
+            <% if (conversations.length > 0) { %>
+                <% conversations.forEach(convo => { %>
+                    <a href="/messages/<%= convo.partner_id %>" class="conversation-item">
+                        <img src="<%= convo.partner_picture || '/images/default_avatar.png' %>" alt="<%= convo.partner_name %> Profile Picture">
+                        <div>
+                            <h3><%= convo.partner_name %></h3>
+                            <p>Last message: <%= new Date(convo.last_updated).toLocaleString() %></p>
+                        </div>
+                    </a>
+                <% }); %>
+            <% } else { %>
+                <p class="no-conversations">You have no ongoing conversations.</p>
+            <% } %>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,22 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --chat-bg: #e9ecef;
+            --sent-bubble-bg: #4361ee;
+            --sent-text: white;
+            --received-bubble-bg: #ffffff;
+            --received-text: #212529;
+            --border-color: #dee2e6;
+            --border-radius: 18px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--received-text);
+            line-height: 1.6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            background: var(--chat-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .chat-header {
+            padding: 15px 25px;
+            background: var(--primary-blue);
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .message-history {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message-bubble.sent {
+            background: var(--sent-bubble-bg);
+            color: var(--sent-text);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-bubble.received {
+            background: var(--received-bubble-bg);
+            color: var(--received-text);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-bubble p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .message-bubble small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        .message-form-container {
+            padding: 15px 25px;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
+        }
+
+        textarea {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: none;
+            height: 50px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--primary-dark-blue);
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
-    <h1><%= title %></h1>
-    <div class="message-history">
-        <% messages.forEach(message => { %>
-            <div class="message-bubble <%= message.sender_id === userId ? 'sent' : 'received' %>">
-                <p><%= message.body %></p>
-                <small><%= new Date(message.created_at).toLocaleString() %></small>
-            </div>
-        <% }); %>
+    <div class="chat-container">
+        <div class="chat-header">
+            <%= title %>
+        </div>
+        <div class="message-history">
+            <% messages.forEach(message => { %>
+                <div class="message-bubble <%= message.sender_id === userId ? 'sent' : 'received' %>">
+                    <p><%= message.body %></p>
+                    <small><%= new Date(message.created_at).toLocaleString() %></small>
+                </div>
+            <% }); %>
+        </div>
+        <div class="message-form-container">
+            <form action="/messages/<%= partnerId %>" method="POST" style="display: flex; flex-grow: 1; gap: 10px;">
+                <textarea name="messageBody" placeholder="Type your message..." required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
     </div>
-    <form action="/messages/<%= partnerId %>" method="POST">
-        <textarea name="messageBody" placeholder="Type your message..." required></textarea>
-        <button type="submit">Send</button>
-    </form>
 </body>
 </html>
