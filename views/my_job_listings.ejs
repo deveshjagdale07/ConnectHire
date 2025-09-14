@@ -5,23 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .job-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .job-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .job-header h3 {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin: 0;
+        }
+
+        .job-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .job-details p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+        }
+        
+        .job-details p strong {
+            color: var(--text-dark);
+        }
+        
+        .job-details i {
+            margin-right: 8px;
+            color: var(--primary-dark-blue);
+        }
+
+        .job-description {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .job-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-view-applicants {
+            padding: 10px 20px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-applicants:hover {
+            background-color: var(--primary-dark-blue);
+        }
+        
+        .no-jobs {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-    <h1>My Job Listings</h1>
-    <% if (listings.length > 0) { %>
-        <% listings.forEach(job => { %>
-            <div class="job-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-                <h3><%= job.role %></h3>
-                <p><strong>Compensation:</strong> <%= job.compensation %></p>
-                <p><strong>Job Type:</strong> <%= job.job_type %></p>
-                <p><strong>Location:</strong> <%= job.location %></p>
-                <p><strong>Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
-                <p><%= job.description %></p>
-                <a href="/company/job_applicants/<%= job.id %>"><button>View Applicants</button></a>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>You have not posted any jobs yet.</p>
-    <% } %>
+    <div class="container">
+        <h1>My Job Listings</h1>
+        <% if (listings.length > 0) { %>
+            <% listings.forEach(job => { %>
+                <div class="job-card">
+                    <div class="job-header">
+                        <h3><%= job.role %></h3>
+                    </div>
+                    <div class="job-details">
+                        <p><strong><i class="fas fa-money-bill-wave"></i> Compensation:</strong> <%= job.compensation %></p>
+                        <p><strong><i class="fas fa-briefcase"></i> Job Type:</strong> <%= job.job_type %></p>
+                        <p><strong><i class="fas fa-map-marker-alt"></i> Location:</strong> <%= job.location %></p>
+                        <p><strong><i class="fas fa-calendar-alt"></i> Posted On:</strong> <%= new Date(job.created_at).toLocaleDateString() %></p>
+                    </div>
+                    <div class="job-description">
+                        <p><strong>Description:</strong> <%= job.description %></p>
+                    </div>
+                    <div class="job-actions">
+                        <a href="/company/job_applicants/<%= job.id %>" class="btn-view-applicants">View Applicants</a>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p class="no-jobs">You have not posted any jobs yet.</p>
+        <% } %>
+    </div>
 </body>
 </html>

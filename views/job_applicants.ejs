@@ -5,80 +5,244 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .applicant-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 16px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
             padding: 20px;
-            margin-bottom: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .job-title-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .job-title-header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .applicant-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
             display: flex;
             align-items: center;
-            gap: 20px;
-            cursor: pointer; /* Add a cursor to indicate it's clickable */
+            gap: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
+        
+        .applicant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
         .applicant-card img {
             width: 80px;
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
+            border: 3px solid var(--border-color);
         }
+
         .applicant-details {
             flex-grow: 1;
         }
 
-        /* Modal styles from browse_developers.ejs */
+        .applicant-details h3 {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            margin: 0 0 5px 0;
+            font-weight: 600;
+        }
+        
+        .applicant-details p {
+            margin: 5px 0;
+            color: var(--text-gray);
+            font-size: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: white;
+            box-shadow: var(--shadow-md);
+            margin-left: 10px;
+        }
+        
+        .status-badge.pending {
+            background-color: var(--warning-color);
+        }
+
+        .status-badge.interview_scheduled {
+            background-color: var(--accent-cyan);
+        }
+
+        .status-badge.hired {
+            background-color: var(--success-color);
+        }
+
+        .status-badge.rejected {
+            background-color: var(--danger-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            margin-top: 50px;
+        }
+        
+        /* Modal styles */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
+            display: none;
+            position: fixed;
+            z-index: 1001;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            border-radius: 10px;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 700px;
         }
         .close {
-            color: #aaa;
+            color: var(--text-gray);
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
         .close:hover,
         .close:focus {
-            color: black;
+            color: var(--text-dark);
             text-decoration: none;
             cursor: pointer;
+        }
+        .modal-body-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .modal-body-content img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        .modal-body-content p {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin: 5px 0;
+        }
+        .modal-body-content strong {
+            color: var(--text-dark);
+        }
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-hire {
+            background: var(--success-color);
+            color: white;
+        }
+        .btn-hire:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <h1>Applicants for <%= jobListing.role %></h1>
+    <div class="container">
+        <div class="job-title-header">
+            <h1>Applicants for <%= jobListing.role %></h1>
+        </div>
 
-    <% if (applicants.length > 0) { %>
-        <% applicants.forEach(applicant => { %>
-            <div class="applicant-card" data-user-id="<%= applicant.user_id %>">
-                <img src="<%= applicant.profile_picture || '/images/default_avatar.png' %>" alt="<%= applicant.name %>">
-                <div class="applicant-details">
-                    <h3><%= applicant.name %></h3>
-                    <p><strong>Role:</strong> <%= applicant.role %></p>
-                    <p><strong>Skills:</strong> <%= applicant.skills %></p>
-                    <p><strong>Status:</strong> <span style="text-transform: capitalize;"><%= applicant.status %></span></p>
-                    <p>Applied on <%= new Date(applicant.created_at).toLocaleDateString() %></p>
+        <% if (applicants.length > 0) { %>
+            <% applicants.forEach(applicant => { %>
+                <div class="applicant-card" data-user-id="<%= applicant.user_id %>">
+                    <img src="<%= applicant.profile_picture || '/images/default_avatar.png' %>" alt="<%= applicant.name %>">
+                    <div class="applicant-details">
+                        <h3>
+                            <%= applicant.name %>
+                            <span class="status-badge <%= applicant.status %>"><%= applicant.status.replace('_', ' ') %></span>
+                        </h3>
+                        <p><strong>Role:</strong> <%= applicant.role %></p>
+                        <p><strong>Skills:</strong> <%= applicant.skills %></p>
+                        <p><strong>Applied:</strong> <%= new Date(applicant.created_at).toLocaleDateString() %></p>
+                    </div>
                 </div>
-            </div>
-        <% }); %>
-    <% } else { %>
-        <p>There are no applicants for this job yet.</p>
-    <% } %>
+            <% }); %>
+        <% } else { %>
+            <p class="empty-state">There are no applicants for this job yet.</p>
+        <% } %>
+    </div>
     
     <div id="profileModal" class="modal">
         <div class="modal-content">
@@ -88,75 +252,79 @@
         </div>
     </div>
     
-</body>
-<script>
-    // ... (modal-related variables and functions)
-    const modal = document.getElementById("profileModal");
-    const modalBody = document.getElementById("modal-body");
-    const span = document.getElementsByClassName("close")[0];
+    <script>
+        const modal = document.getElementById("profileModal");
+        const modalBody = document.getElementById("modal-body");
+        const span = document.getElementsByClassName("close")[0];
+        const jobId = "<%= jobId %>";
+        
+        document.querySelectorAll('.applicant-card').forEach(card => {
+            card.addEventListener('click', async (event) => {
+                const userId = event.currentTarget.dataset.userId;
 
-    document.querySelectorAll('.applicant-card').forEach(card => {
-        card.addEventListener('click', async (event) => {
-            const userId = event.currentTarget.dataset.userId;
+                const response = await fetch(`/job_seeker/api/profile/${userId}`);
+                const data = await response.json();
 
-            const response = await fetch(`/job_seeker/api/profile/${userId}`);
-            const data = await response.json();
+                if (response.ok) {
+                    const profile = data.profile;
+                    const certifications = data.certifications;
 
-            if (response.ok) {
-                const profile = data.profile;
-                const certifications = data.certifications;
-                const jobId = "<%= jobId %>"; // Pass the jobId from the server
+                    let skillsList = '';
+                    if (profile.skills) {
+                        skillsList = profile.skills.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
+                    }
 
-                let skillsList = '';
-                if (profile.skills) {
-                    skillsList = profile.skills.split(',').map(skill => `<li>${skill.trim()}</li>`).join('');
-                }
+                    let certList = '';
+                    certifications.forEach(cert => {
+                        certList += `
+                            <li>
+                                <a href="${cert.file_url}" target="_blank">${cert.name}</a>
+                            </li>
+                        `;
+                    });
 
-                let certList = '';
-                certifications.forEach(cert => {
-                    certList += `
-                        <li>
-                            <a href="${cert.file_url}" target="_blank">${cert.name}</a>
-                        </li>
+                    modalBody.innerHTML = `
+                        <div class="modal-body-content">
+                            <h2>${profile.name}'s Profile</h2>
+                            <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture">
+                            <p><strong>Role:</strong> ${profile.role}</p>
+                            <p><strong>Location:</strong> ${profile.location}</p>
+                            <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
+                            <p><strong>Experience:</strong> ${profile.experience}</p>
+                            <p><strong>Projects:</strong> ${profile.projects}</p>
+                            <h3>Skills</h3>
+                            <ul>${skillsList}</ul>
+                            <h3>Certifications</h3>
+                            <ul>${certList}</ul>
+                            <br>
+                            <a href="${profile.resume_url}" target="_blank">Download Resume</a>
+                            <hr>
+                            <div class="modal-actions">
+                                <form action="/company/schedule_interview/${jobId}/${userId}" method="POST">
+                                    <button type="submit" class="modal-btn">Schedule Interview</button>
+                                </form>
+                                <form action="/company/hire_applicant/${jobId}/${userId}" method="POST">
+                                    <button type="submit" class="modal-btn btn-hire">Hire</button>
+                                </form>
+                            </div>
+                        </div>
                     `;
-                });
-
-                modalBody.innerHTML = `
-                    <h2>${profile.name}'s Profile</h2>
-                    <div style="text-align: center;">
-                        <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
-                    </div>
-                    <p><strong>Role:</strong> ${profile.role}</p>
-                    <p><strong>Location:</strong> ${profile.location}</p>
-                    <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
-                    <p><strong>Experience:</strong> ${profile.experience}</p>
-                    <p><strong>Projects:</strong> ${profile.projects}</p>
-                    <h3>Skills</h3>
-                    <ul>${skillsList}</ul>
-                    <h3>Certifications</h3>
-                    <ul>${certList}</ul>
-                    <br>
-                    <a href="${profile.resume_url}" target="_blank">Download Resume</a>
-                    <hr>
-                    <form action="/company/schedule_interview/${jobId}/${userId}" method="POST">
-                        <button type="submit" style="background-color: #007bff; color: white;">Schedule Interview</button>
-                    </form>
-                `;
-                modal.style.display = "block";
-            } else {
-                alert('Could not load profile.');
-            }
+                    modal.style.display = "block";
+                } else {
+                    alert('Could not load profile.');
+                }
+            });
         });
-    });
 
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
+        span.onclick = function() {
             modal.style.display = "none";
         }
-    }
-</script>
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
 </html>

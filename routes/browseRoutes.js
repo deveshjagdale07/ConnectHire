@@ -166,7 +166,6 @@ router.get('/company/job_applicants/:jobId', isCompany, async (req, res) => {
             [jobId]
         );
         
-        // Corrected line: Passing jobId to the view
         res.render('job_applicants', {
             title: `Applicants for ${jobListing.role}`,
             jobListing: jobListing,
@@ -179,7 +178,6 @@ router.get('/company/job_applicants/:jobId', isCompany, async (req, res) => {
         res.status(500).send('An error occurred while fetching job applicants.');
     }
 });
-
 
 // New POST route to handle scheduling an interview with an applicant
 router.post('/company/schedule_interview/:jobId/:applicantId', isCompany, async (req, res) => {
@@ -205,5 +203,40 @@ router.post('/company/schedule_interview/:jobId/:applicantId', isCompany, async 
     }
 });
 
+// New POST route to handle hiring an applicant
+router.post('/company/hire_applicant/:jobId/:applicantId', isCompany, async (req, res) => {
+    const jobId = req.params.jobId;
+    const applicantId = req.params.applicantId;
+    const companyId = req.session.user.id;
+
+    try {
+        const [jobRows] = await db.query('SELECT id FROM job_listings WHERE id = ? AND company_id = ?', [jobId, companyId]);
+        if (jobRows.length === 0) {
+            return res.status(403).send('Permission denied.');
+        }
+
+        await db.query(
+            'UPDATE applications SET status = ? WHERE job_id = ? AND job_seeker_id = ?',
+            ['hired', jobId, applicantId]
+        );
+
+        // Notify the job seeker they have been hired
+        const [applicantRows] = await db.query('SELECT name FROM job_seeker_profiles WHERE user_id = ?', [applicantId]);
+        const applicantName = applicantRows[0].name;
+
+        const [jobTitleRows] = await db.query('SELECT role FROM job_listings WHERE id = ?', [jobId]);
+        const jobTitle = jobTitleRows[0].role;
+
+        await db.query(
+            'INSERT INTO notifications (user_id, message, related_url) VALUES (?, ?, ?)',
+            [applicantId, `Congratulations! You have been hired for the role of ${jobTitle}.`, `/job_seeker/my_applications`]
+        );
+
+        res.redirect(`/company/job_applicants/${jobId}`);
+    } catch (error) {
+        console.error('Error hiring applicant:', error);
+        res.status(500).send('Failed to hire applicant.');
+    }
+});
 
 module.exports = router;

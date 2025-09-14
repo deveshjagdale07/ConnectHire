@@ -5,125 +5,265 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .profile-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+        :root {
+            --primary-blue: #4361ee;
+            --primary-dark-blue: #3a0ca3;
+            --accent-cyan: #4cc9f0;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #212529;
+            --text-gray: #6c757d;
+            --success-color: #4bb543;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --border-radius: 12px;
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
         }
-        .profile-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
             padding: 20px;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-dark-blue);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .search-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-form input,
+        .search-form select,
+        .search-form button {
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-form input:focus,
+        .search-form select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .search-form button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .search-form button:hover {
+            background-color: var(--primary-dark-blue);
+        }
+
+        .profile-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow-md);
             text-align: center;
             cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
         .profile-card img {
             width: 100px;
             height: 100px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-blue);
         }
+
+        .profile-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-dark-blue);
+            margin-bottom: 5px;
+        }
+        
+        .profile-card p {
+            margin: 5px 0;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+        
+        .profile-card p strong {
+            color: var(--text-dark);
+        }
+        
         /* Modal styles */
         .modal {
             display: none; 
             position: fixed; 
-            z-index: 1; 
+            z-index: 1001; 
             left: 0;
             top: 0;
             width: 100%; 
             height: 100%; 
             overflow: auto; 
-            background-color: rgba(0,0,0,0.4); 
+            background-color: rgba(0,0,0,0.5); 
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 5% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            border-radius: 10px;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 700px;
+            position: relative;
         }
         .close {
-            color: #aaa;
-            float: right;
+            color: var(--text-gray);
+            position: absolute;
+            top: 15px;
+            right: 25px;
             font-size: 28px;
             font-weight: bold;
         }
         .close:hover,
         .close:focus {
-            color: black;
+            color: var(--text-dark);
             text-decoration: none;
             cursor: pointer;
         }
-        .search-form {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            text-align: left;
+        .modal-body-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
-        .search-form input,
-        .search-form select,
-        .search-form button {
-            padding: 8px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .modal-body-content img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-blue);
+            margin-bottom: 20px;
+        }
+        .modal-body-content p {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin: 5px 0;
+        }
+        .modal-body-content strong {
+            color: var(--text-dark);
+        }
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: white;
+            background: var(--primary-blue);
+        }
+        .modal-btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <h1>Browse Developers</h1>
+    <div class="container">
+        <h1>Browse Developers</h1>
 
-    <div class="search-form">
-        <form action="/company/browse_developers" method="GET">
-            <input type="text" name="skills" placeholder="Search by Skills" value="<%= typeof filters !== 'undefined' ? filters.skills : '' %>">
-            
-            <select name="role">
-                <option value="">All Roles</option>
-                <option value="Full-stack Developer" <%= typeof filters !== 'undefined' && filters.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
-                <option value="Frontend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
-                <option value="Backend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
-                <option value="Mobile Developer" <%= typeof filters !== 'undefined' && filters.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
-                <option value="DevOps Engineer" <%= typeof filters !== 'undefined' && filters.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
-            </select>
+        <div class="search-form">
+            <form action="/company/browse_developers" method="GET">
+                <input type="text" name="skills" placeholder="Search by Skills" value="<%= typeof filters !== 'undefined' ? filters.skills : '' %>">
+                
+                <select name="role">
+                    <option value="">All Roles</option>
+                    <option value="Full-stack Developer" <%= typeof filters !== 'undefined' && filters.role === 'Full-stack Developer' ? 'selected' : '' %>>Full-stack Developer</option>
+                    <option value="Frontend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Frontend Developer' ? 'selected' : '' %>>Frontend Developer</option>
+                    <option value="Backend Developer" <%= typeof filters !== 'undefined' && filters.role === 'Backend Developer' ? 'selected' : '' %>>Backend Developer</option>
+                    <option value="Mobile Developer" <%= typeof filters !== 'undefined' && filters.role === 'Mobile Developer' ? 'selected' : '' %>>Mobile Developer</option>
+                    <option value="DevOps Engineer" <%= typeof filters !== 'undefined' && filters.role === 'DevOps Engineer' ? 'selected' : '' %>>DevOps Engineer</option>
+                </select>
 
-            <select name="location">
-                <option value="">All Locations</option>
-                <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
-                <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
-                <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
-                <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
-                <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
-                <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
-                <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
-                <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
-            </select>
+                <select name="location">
+                    <option value="">All Locations</option>
+                    <option value="Jalgaon" <%= typeof filters !== 'undefined' && filters.location === 'Jalgaon' ? 'selected' : '' %>>Jalgaon</option>
+                    <option value="Mumbai" <%= typeof filters !== 'undefined' && filters.location === 'Mumbai' ? 'selected' : '' %>>Mumbai</option>
+                    <option value="Pune" <%= typeof filters !== 'undefined' && filters.location === 'Pune' ? 'selected' : '' %>>Pune</option>
+                    <option value="Bangalore" <%= typeof filters !== 'undefined' && filters.location === 'Bangalore' ? 'selected' : '' %>>Bangalore</option>
+                    <option value="Delhi" <%= typeof filters !== 'undefined' && filters.location === 'Delhi' ? 'selected' : '' %>>Delhi</option>
+                    <option value="Chennai" <%= typeof filters !== 'undefined' && filters.location === 'Chennai' ? 'selected' : '' %>>Chennai</option>
+                    <option value="Hyderabad" <%= typeof filters !== 'undefined' && filters.location === 'Hyderabad' ? 'selected' : '' %>>Hyderabad</option>
+                    <option value="Remote" <%= typeof filters !== 'undefined' && filters.location === 'Remote' ? 'selected' : '' %>>Remote</option>
+                </select>
 
-            <button type="submit">Search</button>
-        </form>
-    </div>
+                <button type="submit">Search</button>
+            </form>
+        </div>
 
-    <div class="profile-list">
-        <% if (profiles.length > 0) { %>
-            <% profiles.forEach(profile => { %>
-                <div class="profile-card" data-user-id="<%= profile.user_id %>">
-                    <img src="<%= profile.profile_picture || '/images/default_avatar.png' %>" alt="<%= profile.name %>">
-                    <h3><%= profile.name %></h3>
-                    <p><strong>Role:</strong> <%= profile.role %></p>
-                    <p><strong>Skills:</strong> <%= profile.skills %></p>
-                    <p><strong>Location:</strong> <%= profile.location %></p>
-                </div>
-            <% }); %>
-        <% } else { %>
-            <p>No developer profiles found matching your criteria.</p>
-        <% } %>
+        <div class="profile-list">
+            <% if (profiles.length > 0) { %>
+                <% profiles.forEach(profile => { %>
+                    <div class="profile-card" data-user-id="<%= profile.user_id %>">
+                        <img src="<%= profile.profile_picture || '/images/default_avatar.png' %>" alt="<%= profile.name %>">
+                        <h3><%= profile.name %></h3>
+                        <p><strong>Role:</strong> <%= profile.role %></p>
+                        <p><strong>Skills:</strong> <%= profile.skills %></p>
+                        <p><strong>Location:</strong> <%= profile.location %></p>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No developer profiles found matching your criteria.</p>
+            <% } %>
+        </div>
     </div>
 
     <div id="profileModal" class="modal">
@@ -143,7 +283,6 @@
             card.addEventListener('click', async (event) => {
                 const userId = event.currentTarget.dataset.userId;
 
-                // Fetch the full profile data from the API route
                 const response = await fetch(`/job_seeker/api/profile/${userId}`);
                 const data = await response.json();
 
@@ -166,24 +305,26 @@
                     });
 
                     modalBody.innerHTML = `
-                        <h2>${profile.name}'s Profile</h2>
-                        <div style="text-align: center;">
-                            <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+                        <div class="modal-body-content">
+                            <h2>${profile.name}'s Profile</h2>
+                            <img src="${profile.profile_picture || '/images/default_avatar.png'}" alt="Profile Picture">
+                            <p><strong>Role:</strong> ${profile.role}</p>
+                            <p><strong>Location:</strong> ${profile.location}</p>
+                            <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
+                            <p><strong>Experience:</strong> ${profile.experience}</p>
+                            <p><strong>Projects:</strong> ${profile.projects}</p>
+                            <h3>Skills</h3>
+                            <ul>${skillsList}</ul>
+                            <h3>Certifications</h3>
+                            <ul>${certList}</ul>
+                            <br>
+                            <a href="${profile.resume_url}" target="_blank">Download Resume</a>
+                            <hr>
+                            <div class="modal-actions">
+                                <a href="/company/request_job/${profile.user_id}" class="modal-btn">Hire This Developer</a>
+                                <a href="/messages/${profile.user_id}" class="modal-btn">Send a Message</a>
+                            </div>
                         </div>
-                        <p><strong>Role:</strong> ${profile.role}</p>
-                        <p><strong>Location:</strong> ${profile.location}</p>
-                        <p><strong>Work Preferences:</strong> ${profile.work_preferences}</p>
-                        <p><strong>Experience:</strong> ${profile.experience}</p>
-                        <p><strong>Projects:</strong> ${profile.projects}</p>
-                        <h3>Skills</h3>
-                        <ul>${skillsList}</ul>
-                        <h3>Certifications</h3>
-                        <ul>${certList}</ul>
-                        <br>
-                        <a href="${profile.resume_url}" target="_blank">Download Resume</a>
-                        <hr>
-                        <a href="/company/request_job/${profile.user_id}"><button>Hire This Developer</button></a>
-                        <a href="/messages/${profile.user_id}"><button>Send a Message</button></a>
                     `;
                     modal.style.display = "block";
                 } else {

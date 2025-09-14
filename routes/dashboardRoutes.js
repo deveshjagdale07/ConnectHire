@@ -92,6 +92,7 @@ router.post('/job_seeker/reject_request/:id', requireLogin, async (req, res) => 
 });
 
 // Company Dashboard
+// Company Dashboard (Improved)
 router.get('/company/dashboard', requireLogin, async (req, res) => {
     if (req.session.user.role === 'company') {
         const userId = req.session.user.id;
@@ -100,35 +101,44 @@ router.get('/company/dashboard', requireLogin, async (req, res) => {
             const [profileRows] = await db.query('SELECT company_name, company_logo FROM company_profiles WHERE user_id = ?', [userId]);
             const profile = profileRows[0];
             
-            // Handle the case where the profile might not exist yet
             if (!profile) {
                 res.render('company_dashboard', {
                     title: 'Company Dashboard',
                     user: req.session.user,
                     profile: { company_name: 'New Company', company_logo: '/images/default_company.png' },
-                    requests: []
+                    stats: {
+                        activeListings: 0,
+                        pendingApplications: 0,
+                        unreadNotifications: 0
+                    }
                 });
                 return;
             }
             
-            const [requests] = await db.query(
-                `SELECT 
-                    jr.id, jr.role, jr.compensation, jr.duration, jr.job_type, jr.location, jr.status, 
-                    jsp.name, jsp.profile_picture
-                FROM job_requests AS jr
-                JOIN job_seeker_profiles AS jsp ON jr.job_seeker_id = jsp.user_id
-                WHERE jr.company_id = ?`,
+            // Fetch counts for dashboard stats
+            const [activeListingsCountRows] = await db.query('SELECT COUNT(*) AS count FROM job_listings WHERE company_id = ?', [userId]);
+            const [pendingApplicationsCountRows] = await db.query(
+                `SELECT COUNT(a.id) AS count
+                FROM applications AS a
+                JOIN job_listings AS jl ON a.job_id = jl.id
+                WHERE jl.company_id = ? AND a.status = 'pending'`,
                 [userId]
             );
+            const [unreadNotificationsCountRows] = await db.query('SELECT COUNT(*) AS count FROM notifications WHERE user_id = ? AND is_read = FALSE', [userId]);
+
             res.render('company_dashboard', {
                 title: 'Company Dashboard',
                 user: req.session.user,
                 profile: profile,
-                requests: requests
+                stats: {
+                    activeListings: activeListingsCountRows[0].count,
+                    pendingApplications: pendingApplicationsCountRows[0].count,
+                    unreadNotifications: unreadNotificationsCountRows[0].count
+                }
             });
         } catch (error) {
-            console.error('Error fetching sent requests:', error);
-            res.status(500).send('An error occurred while fetching your sent requests.');
+            console.error('Error fetching company dashboard data:', error);
+            res.status(500).send('An error occurred while fetching your dashboard data.');
         }
     } else {
         res.status(403).send("Access Denied");

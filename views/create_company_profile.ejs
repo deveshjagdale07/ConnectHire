@@ -1,16 +1,443 @@
-<h1>Create Your Company Profile</h1>
-<form action="/company/create_profile" method="POST" enctype="multipart/form-data">
-  <label for="company_name">Company Name:</label>
-  <input type="text" id="company_name" name="company_name" required><br>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Company Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f9c74f;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent), var(--warning));
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-group label i {
+            margin-right: 10px;
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 2px dashed #e2e8f0;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .file-upload-label:hover {
+            border-color: var(--primary);
+            background-color: #f0f4ff;
+        }
+        
+        .file-upload-label i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-label span {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .file-upload-label small {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        
+        .file-preview {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+        
+        .file-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .character-count {
+            text-align: right;
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo span {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <span><i class="fas fa-building"></i> CompanyProfile</span>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Create Your Company Profile</h1>
+            <p>Showcase your company to potential candidates</p>
+        </div>
+        
+        <div class="form-container">
+            <form id="companyProfileForm" action="/company/create_profile" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="company_name"><i class="fas fa-building"></i> Company Name</label>
+                    <input type="text" id="company_name" name="company_name" class="form-control" placeholder="Enter your company name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company_logo"><i class="fas fa-image"></i> Company Logo</label>
+                    <div class="file-upload">
+                        <label class="file-upload-label" for="company_logo">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click to upload your logo</span>
+                            <small>PNG, JPG up to 5MB</small>
+                        </label>
+                        <input type="file" id="company_logo" name="company_logo" class="file-input" accept="image/*">
+                    </div>
+                    <div class="file-preview" id="logoPreview">
+                        <img src="" alt="Logo preview">
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" id="uploadProgress"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="founding_details"><i class="fas fa-calendar-alt"></i> Founding Details</label>
+                    <input type="text" id="founding_details" name="founding_details" class="form-control" placeholder="e.g., Established in 2010">
+                </div>
+                
+                <div class="form-group">
+                    <label for="about"><i class="fas fa-info-circle"></i> About Us</label>
+                    <textarea id="about" name="about" class="form-control" placeholder="Tell us about your company culture, mission, and values..."></textarea>
+                    <div class="character-count"><span id="charCount">0</span>/1000 characters</div>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-rocket"></i> Create Profile
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> Company profile created successfully!
+    </div>
 
-  <label for="company_logo">Company Logo:</label>
-  <input type="file" id="company_logo" name="company_logo"><br>
-
-  <label for="founding_details">Founding Details:</label>
-  <input type="text" id="founding_details" name="founding_details"><br>
-
-  <label for="about">About Us:</label>
-  <textarea id="about" name="about"></textarea><br>
-
-  <button type="submit">Create Profile</button>
-</form>
+    <script>
+        document.getElementById('companyProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show notification
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+            
+            // Submit the form after a brief delay for UX
+            setTimeout(() => {
+                this.submit();
+            }, 1000);
+        });
+        
+        // Character count for about section
+        const about = document.getElementById('about');
+        const charCount = document.getElementById('charCount');
+        
+        about.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+            
+            if (this.value.length > 1000) {
+                charCount.style.color = 'red';
+            } else {
+                charCount.style.color = '#6c757d';
+            }
+        });
+        
+        // File upload preview
+        const fileInput = document.getElementById('company_logo');
+        const logoPreview = document.getElementById('logoPreview');
+        const progressBar = document.getElementById('uploadProgress');
+        
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.addEventListener('load', function() {
+                    logoPreview.style.display = 'block';
+                    logoPreview.querySelector('img').setAttribute('src', this.result);
+                });
+                
+                reader.readAsDataURL(file);
+                
+                // Simulate upload progress
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        width += 10;
+                        progressBar.style.width = width + '%';
+                    }
+                }, 100);
+            }
+        });
+        
+        // Drag and drop functionality
+        const fileUploadLabel = document.querySelector('.file-upload-label');
+        
+        fileUploadLabel.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = var(--primary);
+            this.style.backgroundColor = '#f0f4ff';
+        });
+        
+        fileUploadLabel.addEventListener('dragleave', function() {
+            this.style.borderColor = '#e2e8f0';
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        
+        fileUploadLabel.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#e2e8f0';
+            this.style.backgroundColor = '#f8f9fa';
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.includes('image')) {
+                fileInput.files = e.dataTransfer.files;
+                
+                // Trigger change event
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+    </script>
+</body>
+</html>
